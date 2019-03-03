@@ -1,0 +1,314 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[a4paper, includeheadfoot, mag=1000, left=2cm, right=1.5cm, top=1.5cm, bottom=1.5cm, headsep=0.8cm, footskip=0.8cm]{geometry}
+% Fonts
+\usepackage{fontspec, unicode-math}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[english, russian]{babel}
+% Indent first paragraph
+\usepackage{indentfirst}
+\setlength{\parskip}{5pt}
+% Diagrams
+\usepackage{graphicx}
+\usepackage{float}
+% Page headings
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%\newfontfamily\namefont[Scale=1.2]{Gloria Hallelujah}
+\fancyhead{}
+\begin{document}
+
+% Title page
+\include{spectitlepage}
+\section{Описание команд}
+\subsection{Команды для повторения}
+\begin{itemize}
+  % LS
+  \item \textbf{\texttt{ls}} -- (eng. \textit{list}) -- Показывает содержимое
+    директории. \texttt{ls [OPTION]... [FILE]...} - по умолчанию FILE = ., т.е.
+    ls по умолчанию показывает содержимое текущей директории.
+    \begin{itemize}
+      \item \textbf{\texttt{-a, --all}} -- отображать скрытые файлы (имя
+        начинается с .)
+      \item \textbf{\texttt{-A, --almost-all}} -- отображать скрытые файлы,
+        кроме . и ..
+      \item \textbf{\texttt{-d, --directory}} -- отображать информацию только
+        о текущей директории, но не о её содержимом
+      \item \textbf{\texttt{-h, --human-readable}} -- отображать информацию о
+        размере файлов с использованием приставок (K, M, G etc.)
+      \item \textbf{\texttt{--si}} -- аналог -h, но используются степени 10, а
+        не 2
+      \item \textbf{\texttt{-i, --inode}} - отображать index number каждого файла
+      \item \textbf{\texttt{-l}} - расширенный формат отображения
+    \end{itemize}
+  % PWD
+  \item \textbf{\texttt{pwd}} -- (eng. \textit{present working directory}) --
+    отобразить имя текущего рабочего каталога. \texttt{pwd [OPTION]}
+    \begin{itemize}
+      \item \textbf{\texttt{-P, --physical}} -- не учитывать символьные ссылки
+      \item \textbf{\texttt{-L, --logical}} -- использовать переменную окружения
+        \texttt{PWD}, даже с символьными ссылками
+    \end{itemize}
+  % CD
+  \item \textbf{\texttt{cd}} -- (eng. \textit{change directory}) -- изменить
+    текущий рабочий каталог. \texttt{cd [OPTION]... [dir]}. cd с неуказанным
+    dir изменит текущий рабочий каталог на содержащийся в переменной окружения
+    \texttt{HOME}. Если указать - как dir, то будет осуществлен переход по
+    переменной окружения \texttt{\$OLDPWD}. После успешного перехода \texttt{PWD}
+    становится \texttt{\$OLDPWD}
+    \begin{itemize}
+      \item \textbf{\texttt{-P, --physical}} -- не учитывать символьные ссылки
+      \item \textbf{\texttt{-L, --logical}} -- учитывать символьные ссылки
+    \end{itemize}
+  % RM
+  \item \textbf{\texttt{rm}} -- (eng. \textit{remove}) -- удалить файлы.
+    \texttt{rm [OPTION]... [FILE]}.
+    \begin{itemize}
+      \item \textbf{\texttt{-f, --force}} -- игнорировать немуществующие файлы
+        и опции, никогда не запрашивать подтверждения на удаление
+      \item \textbf{\texttt{-i}} -- запрашивать подтверждение на каждое удаление
+      \item \textbf{\texttt{-I}} -- запросить подтверждение на удаление в случае
+        удаления больше трех файлов или рекурсивного удаление сожержимого
+        каталога
+      \item \textbf{\texttt{-r, -R, --recursive}} -- удалить все каталоги и их
+        содержимое
+      \item \textbf{\texttt{-d, -dir}} -- удалить пустые каталоги
+    \end{itemize}
+  % MV
+  \item \textbf{\texttt{mv}} -- (eng. \textit{move}) -- переместить/переименовать
+    файлы. \texttt{mv [OPTION]... SOURCE DEST}
+    \begin{itemize}
+      \item \textbf{\texttt{-f, --force}} -- не запрашивать подтверждение на
+        перезапись
+      \item \textbf{\texttt{-i, --interactive}} -- запрашивать подтверждение на
+        перезапись
+      \item \textbf{\texttt{-n, --no-clobber}} -- не перезаписывать
+      \item \textbf{\texttt{-u, --update}} -- исполнить перемещение только если
+        SOURCE новее DEST или DEST не найден
+    \end{itemize}
+  % CP
+  \item \textbf{\texttt{cp}} -- (end. \textit{copy}) -- копировать файлы и каталоги.
+    \texttt{cp [OPTION]... SOURCE DEST}
+    \begin{itemize}
+      \item \textbf{\texttt{-f, --force}} -- если не удается открыть DEST,
+        удалить его и попробовать снова
+      \item \textbf{\texttt{-i, --interactive}} -- запрашивать подтверждение на
+        перезапись
+      \item \textbf{\texttt{-n, --no-clobber}} -- не перезаписывать
+      \item \textbf{\texttt{-u, --update}} -- исполнить копирование только если
+        SOURCE новее DEST или DEST не найден
+      \item \textbf{\texttt{-l, --link}} -- создавать hard link вместо копирования
+      \item \textbf{\texttt{-s, --symbolic-link}} -- создавать soft link вместо
+        копирования
+      \item \textbf{\texttt{-r, -R, --recursive}} -- скопировать все каталоги и
+        их содержимое
+    \end{itemize}
+  \item \textbf{\texttt{mkdir}} -- (eng. \textit{make directory}) -- создать
+    директорию. \texttt{mkdir [OPTION]... DIRECTORY...}
+    \begin{itemize}
+      \item \textbf{\texttt{-m, --mode}} -- настроить права доступа (см. chmod)
+      \item \textbf{\texttt{-p, --parents}} -- не показывать ошибку, если
+        DIRECTORY уже существует, создать дерево директорий если требуется
+      \item \textbf{\texttt{-v, --verbose}} -- показывать информационное
+        сообщение о создании каждой директории
+    \end{itemize}
+  % RMDIR
+  \item \textbf{\texttt{rmdir}} -- (eng. \textit{remove directory}) -- удалить
+    пустую директорию. \texttt{rmdir [OPTION]... DIRECTORY}
+  \begin{itemize}
+    \item \textbf{\texttt{-p, --parents}} -- удалить потомков
+    \item \textbf{\texttt{-v, --verbose}} -- показывать информационное
+      сообщение для каждой удаляемой директории
+    \item \textbf{\texttt{--ignore-fail-on-non-empty}} -- не показывать
+      сообщение об ошибке, если директория не пустая
+  \end{itemize}
+  % TYPE
+  \item \textbf{\texttt{type}} -- (eng. \textit{type}) -- определяет, как
+    определенное выражение будет интерпретироваться командной строкой.
+    \texttt{type [OPTION]... [NAME]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-a}} -- показывать все расположения исполняемых
+      файлов по имени NAME
+    \item \textbf{\texttt{-t}} -- упрощенный вывод
+    \item \textbf{\texttt{-P}} -- искать в \texttt{PATH}
+  \end{itemize}
+  % FILE
+  \item \textbf{\texttt{file}} -- (eng. \textit{file}) -- определить тип файла.
+    \texttt{file [OPTION]... file}
+  \begin{itemize}
+    \item \textbf{\texttt{-b, --brief}} -- не отображать имя файла в выводе
+    \item \textbf{\texttt{-E}} -- при ошибке фаловой системы показать сообщение
+      об ошибке и остановить выполнение
+    \item \textbf{\texttt{-e, --exclude}} -- не проверять файл на соответствие
+      типу, указанному в \texttt{testname}
+  \end{itemize}
+  % FIND
+  \item \textbf{\texttt{find}} -- (eng. \textit{find}) -- поиск файлов,
+  удовлетворяющих паттерну, в иерархии директорий. \texttt{find [OPTION]...
+  [starting-point] [expression]}
+  \begin{itemize}
+    \item \textbf{\texttt{-name}} -- искать файлы по имени
+    \item \textbf{\texttt{-type}} -- искать файлы определенного типа (\texttt{
+      f, d, l etc.})
+    \item \textbf{\texttt{-user}} -- искать файлы, принадлежащие определенному
+     пользователю
+    \item \textbf{\texttt{-mtime}} -- искать файлы, дата изменения которых не
+     превышает указанный срок
+    \item \textbf{\texttt{-iname}} -- искать файлы по имени, игнорируя регистр
+    \item \textbf{\texttt{-not}} -- вывести файлы, которые не удовлетворяют
+      данным параметрам
+    \item \textbf{\texttt{-maxdepth}} -- искать файлы в иерархии директорий не
+      глубже заданного параметра
+  \end{itemize}
+  % CHMOD
+  \item \textbf{\texttt{chmod}} -- (eng. \textit{change mode}) -- модифицировать
+    права доступа файлов и каталогов. \texttt{chmod [OPTION]... [MODE] FILE}
+  \begin{itemize}
+    \item \textbf{\texttt{-v, --verbose}} -- показать информационное сообщение
+      для каждого обработанного файла
+    \item \textbf{\texttt{-c, --changes}} -- показать информационное сообщение
+      только если модификация произошла
+    \item \textbf{\texttt{-f, --silent, --quiet}} -- не показывать сообщения об
+      ошибках
+    \item \textbf{\texttt{--reference}} -- выставить права доступа аналогично
+      файлу, указанному как параметр
+    \item \textbf{\texttt{-R, --recursive}} -- выставить права на все файлы в
+      директории рекурсивно
+  \end{itemize}
+  % LN
+  \item \textbf{\texttt{ln}} -- (eng. \textit{link}) -- создать ссылку на файл
+    или директорию. \texttt{ln [OPTION] TARGET LINK\_NAME}
+  \begin{itemize}
+    \item \textbf{\texttt{-f, --force}} -- перезаписать файлы, если LINK\_NAME
+      существует
+    \item \textbf{\texttt{-i, --interactive}} -- запрашивать подтверждение на
+      перезапись
+    \item \textbf{\texttt{-s, --symbolic}} -- создать soft link
+    \item \textbf{\texttt{-P, --physical}} -- создавать hard link прямо на
+      soft link
+    \item \textbf{\texttt{-L, --logical}} -- разворачивать soft link и создавать
+      hard link на то, на что она указывает
+    \item \textbf{\texttt{-v, --verbose}} -- показывать информационное сообщение
+      при создании каждой ссылки
+  \end{itemize}
+  % WC
+  \item \textbf{\texttt{wc}} -- (eng. \textit{word count}) -- вывести информацию
+    о файле -  число переводов строк, слов и байт для каждого указанного файла
+    и итоговую строку, если было задано несколько файлов. Если входной файл не
+    задан, или равен ‘-‘, то данные считываются со стандартного ввода.
+    \texttt{wc [OPTION]... [FILE]...}
+    \begin{itemize}
+      \item \textbf{\texttt{-c, --bytes}} -- вывести количество байт
+      \item \textbf{\texttt{-m, --chars}} -- вывести количество символов
+      \item \textbf{\texttt{-l, --lines}} -- вывести количество переводов строк
+      \item \textbf{\texttt{-w, --words}} -- вывести количество слов
+    \end{itemize}
+  % TEE
+  \item \textbf{\texttt{tee}} -- (named after the \texttt{T-splitter} used in
+    plumbing) -- чтение из стандартного потока ввода и запись в стандартный
+    поток вывода или файл. \texttt{tee [OPTION]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-a, --append}} -- не перезаписывать файл, дописывать
+      в конец
+    \item \textbf{\texttt{-i, --ignore-interrupts}} -- игнорировать сигналы
+      прерывания
+  \end{itemize}
+  % CAT
+  \item \textbf{\texttt{cat}} -- (eng. \textit{concatenate}) -- объединить
+    последовательно указанные файлы и вывести их содержимое в стандартный
+    поток вывода. \texttt{cat [OPTIONS]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-n, --number}} -- пронумеровать все строчки
+    \item \textbf{\texttt{-b, --number-nonblank}} -- пронумеровать все
+      непустые строчки
+    \item \textbf{\texttt{-v, --show-nonprinting}} -- отображать непечатные
+      символы
+    \item \textbf{\texttt{-T, --show-tabs}} -- отображать табы как 
+      \textasciicircum I
+    \item \textbf{\texttt{-E, --show-ends}} -- отображать \$ на конце строчек
+    \item \textbf{\texttt{-t}} -- эквивалентно \texttt{-vT}
+    \item \textbf{\texttt{-e}} -- эквивалентно \texttt{-vE}
+    \item \textbf{\texttt{-A, --show-all}} -- эквивалентно \texttt{-vET}
+  \end{itemize}
+  % TAIL
+  \item \textbf{\texttt{tail}} -- (eng. \textit{tail}) -- вывести последние
+    строчки файла. \texttt{tail [OPTION]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-c, --bytes}} -- вывести определенное количество байт
+      файла с конца
+    \item \textbf{\texttt{-n, --lines}} -- вывести определенное количество
+      строк файла с конца (по умолчанию 10)
+    \item \textbf{\texttt{-q, --silent, --quiet}} -- не печатать заголовки
+      файлов
+    \item \textbf{\texttt{-v, --verbose}} -- всегда печатать заголовки файлов
+    \item \textbf{\texttt{-z, --zero-terminated}} -- считать NUL за символ
+      новой строки
+    \item \textbf{\texttt{--retry}} -- повторно пытаться открыть файл, если он
+      недоступен
+    \item \textbf{\texttt{-f, --follow}} -- отображать изменения файла по мере
+      его наполнения
+    \item \textbf{\texttt{--pid}} -- завершить работу с завершением указанного
+      процесса
+  \end{itemize}
+  % HEAD
+  \item \textbf{\texttt{head}} -- (eng. \textit{head}) -- вывести первые строчки
+    файла. \texttt{head [OPTION]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-c, --bytes}} -- вывести определенное количество байт
+      файла с начала
+    \item \textbf{\texttt{-n, --lines}} -- вывести определенное количество
+      строк файла с начала (по умолчанию 10)
+    \item \textbf{\texttt{-q, --silent, --quiet}} -- не печатать заголовки
+      файлов
+    \item \textbf{\texttt{-v, --verbose}} -- всегда печатать заголовки файлов
+    \item \textbf{\texttt{-z, --zero-terminated}} -- считать NUL за символ
+      новой строки
+  \end{itemize}
+  % MORE
+  \item \textbf{\texttt{more}} -- (eng. \textit{more}) -- команда для просмотра
+    файлов в страничном режиме. \texttt{more [OPTIONS]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-d}} -- иное поведение при использовании недопустимых
+      клавиш
+    \item \textbf{\texttt{-l}} -- не воспринимать \textasciicircum L как
+      специальный символ
+    \item \textbf{\texttt{-s}} -- объединять последовательности пустых строчек
+      в одну
+    \item \textbf{\texttt{-num}} -- размер экрана в строках
+    \item \textbf{\texttt{+num}} -- номер начальной строки
+    \item \textbf{\texttt{+/}} -- паттерн для поиска по документу перед его
+      открытием, в случае ненахождения перед открытием будет выведено
+      соответствующее сообщение
+  \end{itemize}
+  % PG
+  \item \textbf{\texttt{pg}} -- (eng. \textit{page}) -- команда для просмотра
+    файлов в страничном режиме \texttt{pg [OPTION]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-num}} -- размер экрана в строчках
+    \item \textbf{\texttt{-e}} -- выводить (EOF) на конце файла
+    \item \textbf{\texttt{-c}} -- очистить экран перед выводом новой страницы
+    \item \textbf{\texttt{+num}} -- номер начальной строки
+    \item \textbf{\texttt{+/pattern/}} -- начать со строки, в которой найден
+      паттерн
+  \end{itemize}
+  \item \textbf{\texttt{touch}} -- (eng. \textit{touch}) -- обновление времени
+    доступа к файлу и времени его изменения. \texttt{touch [OPTION]... FILE...}
+    По умолчанию создает новый файл, если FILE отсутствует
+    \begin{itemize}
+      \item \textbf{\texttt{-a}} -- обновить только время доступа
+      \item \textbf{\texttt{-m}} -- обновить только время модификации
+      \item \textbf{\texttt{-d, --date}} -- спарсить строку и использовать
+        вместо текущего времени
+      \item \textbf{\texttt{-r, --reference}} -- выставить время согласно
+        параметрам другого файла
+      \item \textbf{\texttt{-t}} -- использовать данный timestamp вместо
+        текущего времени
+      \item \textbf{\texttt{--time}} -- обновить только определенное время
+        (acces, atime, mtime etc.)
+      \item \textbf{\texttt{-c, --no-create}} -- не создавать новый файл если
+        FILE отсутствует
+    \end{itemize}
+\end{itemize}
+\end{document}
