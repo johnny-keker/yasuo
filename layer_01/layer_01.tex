@@ -21,9 +21,10 @@
 \begin{document}
 
 % Title page
-\include{spectitlepage}
+\include{layer_01_titlepage}
 \section{Описание команд}
 \subsection{Команды для повторения}
+\par\noindent\rule{\textwidth}{0.4pt}
 \begin{itemize}
   % LS
   \item \textbf{\texttt{ls}} -- (eng. \textit{list}) -- Показывает содержимое
@@ -310,5 +311,59 @@
       \item \textbf{\texttt{-c, --no-create}} -- не создавать новый файл если
         FILE отсутствует
     \end{itemize}
+\end{itemize}
+\subsection{Команды для изучения}
+\par\noindent\rule{\textwidth}{0.4pt}
+\begin{itemize}
+  % SU
+  \item \textbf{\texttt{su}} -- (eng. \textit{super user/substitude user}) --
+    позволяет выполнять команды от имени другого пользователя (по умолчанию 
+    root) не завершая текущий сеанс
+  \begin{itemize}
+    \item \textbf{\texttt{-c, --command}} -- выполнить указанную команду
+    \item \textbf{\texttt{-, -l, --login}} -- запустить среду от имени
+      указанного пользователя
+    \item \textbf{\texttt{-m, -p, --preserve-environment}} -- сохранить
+      свою среду, став указанным пользователем
+  \end{itemize}
+  Пример: \texttt{sudo su - postgres}
+  % CHOWN
+  \item \textbf{\texttt{chown}} -- (eng. \textit{change owner}) -- поменять
+    группу и владельца файла. \texttt{chown [OPTION]... [OWNER][:[GROUP]] FILE}
+  \begin{itemize}
+    \item \textbf{\texttt{-v, --verbose}} -- показывать информационное сообщение
+      о каждом обработанном файле
+    \item \textbf{\texttt{-c, --changes}} -- показывать информационное сообщение
+      только в случае успешной обработки
+    \item \textbf{\texttt{-f, --silent, --quiet}} -- подавлять большинство
+      сообщений об ошибках
+    \item \textbf{\texttt{--reference}} -- выставить пользователя и группу
+      согласно другому файлу
+    \item \textbf{\texttt{-R, --recursive}} -- модифицировать файлы и директории
+      рекурсивно
+  \end{itemize}
+  Пример:\\
+  \texttt{-rw-r--r--. 1 keker keker     0 Mar  4 01:06 file}\\
+  \texttt{sudo chown postgres:wheel file}\\
+  \texttt{-rw-r--r--. 1 postgres wheel     0 Mar  4 01:06 file}\\
+  % CHGRP
+  \item \textbf{\texttt{chgrp}} -- (eng. \textit{change group}) -- поменять
+    группу пользователей, владеющих файлом. \texttt{chrp [OPTION]... GROUP FILE...}
+  \begin{itemize}
+    \item \textbf{\texttt{-v, --verbose}} -- показывать информационное сообщение
+      о каждом обработанном файле
+    \item \textbf{\texttt{-c, --changes}} -- показывать информационное сообщение
+      только в случае успешной обработки
+    \item \textbf{\texttt{-f, --silent, --quiet}} -- подавлять большинство
+      сообщений об ошибках
+    \item \textbf{\texttt{--reference}} -- выставить группу
+      согласно другому файлу
+    \item \textbf{\texttt{-R, --recursive}} -- модифицировать файлы и директории
+      рекурсивно
+  \end{itemize}
+  Пример:\\
+  \texttt{-rw-r--r--. 1 keker keker     0 Mar  4 01:06 file}\\
+  \texttt{chgrp wheel file}\\
+  \texttt{-rw-r--r--. 1 keker wheel     0 Mar  4 01:16 file}\\
 \end{itemize}
 \end{document}
