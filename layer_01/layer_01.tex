@@ -365,5 +365,76 @@
   \texttt{-rw-r--r--. 1 keker keker     0 Mar  4 01:06 file}\\
   \texttt{chgrp wheel file}\\
   \texttt{-rw-r--r--. 1 keker wheel     0 Mar  4 01:16 file}\\
+  % LESS
+  \item \textbf{\texttt{less}} -- (eng. \textit{less}) -- "opposite of more"
+    \copyright \texttt{man less} -- улучшение утилиты \texttt{more} для
+    просмотра содержимого текстовых файлов. Основное отличие - позволяет
+    двигаться по документу не только вниз, но и вверх
+    \texttt{less [OPTION]... FILE}
+  \begin{itemize}
+    \item \textbf{\texttt{-b, --buffers}} -- размер буфера для чтения файла в
+      килобайтах, по умолчанию 64. -1 - безграничный буфер.
+    \item \textbf{\texttt{-B, --auto-buffers}} -- устанавливает ограничение в
+      64 килобайт на буфер для чтения из потока
+    \item \textbf{\texttt{-c, --clear-screen}} -- очистить экран перед
+      открытием
+    \item \textbf{\texttt{-e, --quit-at-eof}} -- завершить выполнение при
+      достижении EOF. По умолчанию выполнение завершается только с помощью
+      команды q
+    \item \textbf{\texttt{-f, --force}} -- заставляет less открыть открывать
+      нерегулярные файлы (например директории), подавляет предупреждение при
+      попытке открыть бинарный файл
+    \item \textbf{\texttt{-i, --ignore-case}} -- поиск по документу становится
+      регистро-независимым
+    \item \textbf{\texttt{-n, --line-numbers}} -- отображать номера строк
+  \end{itemize}
+  Пример: \texttt{less layer\_01.tex}
+  % SPLIT
+  \item \textbf{\texttt{split}} -- (eng. \textit{split}) -- разделить файл на
+    части. \texttt{split [OPTION]... [FILE [PREFIX]]}
+  \begin{itemize}
+    \item \textbf{\texttt{-a, --suffix-length}} -- задать длинну генерируемых
+      суффиксов (2 по умолчанию)
+    \item \textbf{\texttt{-b, --bytes}} -- количество байт на выходной файл
+    \item \textbf{\texttt{-d}} -- использовать числовые суффиксы начинающиеся
+      с 0 вместо буквенных
+    \item \textbf{\texttt{x}} -- использовать шестнадцатеричные суффиксы
+    \item \textbf{\texttt{-l, --lines}} -- количество строк на выходной файл
+    \item \textbf{\texttt{--verbose}} -- выводить предупреждение перед созданием
+      каждого выходного файла
+  \end{itemize}
+  Пример:\\
+  \texttt{echo "hello\backslash nthis\backslash nis\backslash nfirst\backslash nlab" > file}\\
+  \texttt{split -l 2 file}\\
+  \texttt{cat xaa}\\
+  \texttt{hello}\\
+  \texttt{this}\\
+  \texttt{cat xab}\\
+  \texttt{is}\\
+  \texttt{first}\\
+  \texttt{cat xac}\\
+  \texttt{lab}\\
+  % JOIN
+  \item \textbf{\texttt{join}} -- (eng. \textit{join}) -- объедияет входные
+    файлы на основании общих полей. \texttt{join [OPTION]... FILE1 FILE2}
+  \begin{itemize}
+    \item \textbf{\texttt{-a}} -- печатать непарные строки из первого или
+      второго файла
+    \item \textbf{\texttt{-i, --ignore-case}} -- регистро-независимое сравнение
+      полей
+    \item \textbf{\texttt{--check-order}} -- проверять файлы на отсортированность
+    \item \textbf{\texttt{--nocheck-order}} -- не проверять файлы на
+      отсортированность
+    \item \textbf{\texttt{--header}} -- считать первую строку каждого файла
+      заголовком столбцов, выводить без попыток объединить
+    \item \textbf{\texttt{-t}} -- настроить символ разделитель поля и значения
+      в файлах
+  \end{itemize}
+  Пример:\\
+  \texttt{echo "field1:value1\backslash nfield2:value2\backslash nfiled4:value3" > file1}\\
+  \texttt{echo "field1:value4\backslash nfield2:value5\backslash nfiled3:value6" > file2}\\
+  \texttt{join -t : file1 file2}\\
+  \texttt{field1:value1:value4}\\
+  \texttt{field2:value2:value5}\\
 \end{itemize}
 \end{document}
