@@ -404,7 +404,7 @@
       каждого выходного файла
   \end{itemize}
   Пример:\\
-  \texttt{echo "hello\backslash nthis\backslash nis\backslash nfirst\backslash nlab" > file}\\
+  \texttt{echo 'hello\backslash nthis\backslash nis\backslash nfirst\backslash nlab' > file}\\
   \texttt{split -l 2 file}\\
   \texttt{cat xaa}\\
   \texttt{hello}\\
@@ -431,10 +431,250 @@
       в файлах
   \end{itemize}
   Пример:\\
-  \texttt{echo "field1:value1\backslash nfield2:value2\backslash nfiled4:value3" > file1}\\
-  \texttt{echo "field1:value4\backslash nfield2:value5\backslash nfiled3:value6" > file2}\\
+  \texttt{echo 'field1:value1\backslash nfield2:value2\backslash nfiled4:value3' > file1}\\
+  \texttt{echo 'field1:value4\backslash nfield2:value5\backslash nfiled3:value6' > file2}\\
   \texttt{join -t : file1 file2}\\
   \texttt{field1:value1:value4}\\
   \texttt{field2:value2:value5}\\
+  % PASTE
+  \item \textbf{\texttt{paste}} -- (eng. \textit{paste}) -- объединить два
+    файла, рассматривая их содержимое как вертикальные колонки.
+    \texttt{paste [OPTION]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-d, --delimiters}} -- задать разделитель столбцов
+      (по умолчанию TAB)
+    \item \textbf{\texttt{-s, --serial}} -- обрабатывать по файлы по одному
+      (горизонтальный вывод)
+    \item \textbf{\texttt{-z, --zero-terminated}} -- NUL как символ перевода
+      строки
+  \end{itemize}
+  Пример:\\
+  \texttt{echo 'this\backslash nthe\backslash nsls' > file1}\\
+  \texttt{echo 'is\backslash nfirst\backslash nlab' > file2}\\
+  \texttt{paste -d ' ' file1 file2}\\
+  \texttt{this is}\\
+  \texttt{the first}\\
+  \texttt{sls lab}\\
+  % CUT
+  \item \textbf{\texttt{cut}} -- (eng. \textit{cut}) -- выборка отдельных
+    полей из строк файла. \texttt{cut [OPTION]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-b, --bytes}} -- выбрать только заданные байты
+    \item \textbf{\texttt{-c, --characters}} -- выбрать только заданные
+      символы
+    \item \textbf{\texttt{-d, --delimiter}} -- использовать заданный разделитель
+      полей (по умолчанию TAB)
+    \item \textbf{\texttt{-f, --fields}} -- выбрать только заданные поля и
+      напечатать все строки, которые не содержать разделителя полей
+    \item \textbf{\texttt{-s, --only-delimited}} -- выводить только строки,
+      содержащие разделитель полей
+    \item \textbf{\texttt{--output-delimiter}} -- разделитель полей для вывода
+    \item \textbf{\texttt{-z, --zero-terminated}} -- NUL как символ перевода
+      строки
+  \end{itemize}
+  Пример:\\
+  \texttt{echo 'zero:one:two:three:four:five\backslash n0:1:2:3:4:5\backslash
+    n000:001:010:011:100:101' > file}\\
+  \texttt{cut -d : --output-delimiter '<' -f 2-4 file}\\
+  \texttt{one<two<three}\\
+  \texttt{1<2<3}\\
+  \texttt{001<010<011}\\
+  % TR
+  \item \textbf{\texttt{tr}} -- (eng. \textit{translate}) -- подстановка или
+    удаление символов. \texttt{tr [OPTION]... SET1 [SET2]}
+  \begin{itemize}
+    \item \textbf{\texttt{-d, --delete}} -- удалить символы из SET1
+    \item \textbf{\texttt{-s, -squeeze-repeats}} -- заместить каждую
+      последовательность символов из последней строки на один такой символ
+    \item \textbf{\texttt{-t, --truncate-set1}} -- сначала уравнять размер SET1
+      и SET2a
+  \end{itemize}
+  Пример:\\
+  \texttt{echo 'this is tr' > file}\\
+  \texttt{tr '[:lower:]' '[:upper:]' < file}\\
+  \texttt{THIS IS TR}\\
+  % CMP
+  \item \textbf{\texttt{cmp}} -- (eng. \textit{compare}) -- байтовое сравнение
+    двух файлов. \texttt{cmp [OPTION]... FILE1 [FILE2 [SKIP1 [SKIP2]]]}
+  \begin{itemize}
+    \item \textbf{\texttt{-}} -- читать файл из стандартного потока ввода
+    \item \textbf{\texttt{-l}} -- вывести номер байта и различия для всех
+      несовпадений
+  \end{itemize}
+  Пример:\\
+  \texttt{cmp -l file file1}\\
+  \texttt{3 151 141}\\
+  \texttt{4 163 164}\\
+  % DIFF
+  \item \textbf{\texttt{diff}} -- (eng. \textit{difference}) -- искать различия
+    между двумя файлами.
+    \texttt{diff [OPTION]... FILES}
+  \begin{itemize}
+    \item \textbf{\texttt{-b}} -- игнорировать изменения в количестве пробелов,
+     табуляций и т. п.
+    \item \textbf{\texttt{-i}} -- игнорировать изменения в регистре символов
+    \item \textbf{\texttt{-r}} -- производить рекурсивное сравнение всех
+      найденных подкаталогов
+    \item \textbf{\texttt{-s}} -- вывести отчет, если файлы идентичны
+  \end{itemize}
+  Пример:\\
+  \texttt{diff file file1}\\
+  \texttt{1c1}\\
+  \texttt{< this is tr}\\
+  \texttt{---}\\
+  \texttt{> that is tr}\\
+  % PATCH
+  \item \textbf{\texttt{patch}} -- (eng. \textit{patch}) -- переносит правки 
+    между разными версиями текстовых файлов.
+    \texttt{patch [options] [originalfile [patchfile]]}
+  \begin{itemize}
+    \item \textbf{\texttt{-b}} -- создать копию оригинала файла приемника
+    \item \textbf{\texttt{-R}} -- откатить изменения
+  \end{itemize}
+  Пример:\\
+  \texttt{diff file file1 >> filed}\\
+  \texttt{patch file filed}\\
+  % SORT
+  \item \textbf{\texttt{sort}} -- (eng. \textit{sort}) -- сортировать строки
+    файлов. \texttt{sort [OPTION]... [FILE]...}
+  \begin{itemize}
+    \item \textbf{\texttt{-b}} -- игнорировать пробелы в начале сортируемых
+      полей или начале ключей
+    \item \textbf{\texttt{-c}} -- проверить отсортирован ли указанный файл
+    \item \textbf{\texttt{-r}} -- сортировка выполняется в обратном порядке
+     (по убыванию)
+    \item \textbf{\texttt{-f}} -- сортировка нечувствительная к регистру
+      символов
+  \end{itemize}
+  Пример:\\
+  \texttt{echo 'this\backslash nis\backslash nnot\backslash nsorted' > file}\\
+  \texttt{sort file}\\
+  \texttt{is\\not\\sorted\\this}
+  % UNIQ
+  \item \textbf{\texttt{uniq}} -- (eng. \textit{unique}) -- пропускaет 
+    повторяющиеся строки. \texttt{uniq [OPTION]... [INPUT [OUTPUT]]}
+  \begin{itemize}
+    \item \textbf{\texttt{-c}} -- выводить число повторов в начале каждой строки
+    \item \textbf{\texttt{-d}} -- выводить только повторяющиеся строки
+    \item \textbf{\texttt{-u}} -- выводить только неповторяющиеся строки
+  \end{itemize}
+  Пример:\\
+  \texttt{uniq -c file}
+  \texttt{1 this\\1 is\\1 not\\1 sorted}
+  % ECHO
+  \item \textbf{\texttt{echo}} -- (eng. \textit{echo}) -- вывести аргументы на
+    экран. \texttt{echo [OPTION]... [STRING]}
+  Пример:\\
+  \texttt{echo 'hello!'\\hello!}
+  % ALIAS
+  \item \textbf{\texttt{alias}} -- (eng. \textit{alias}) -- создать сокращение
+    или псевдоним для команды или серии команд. \texttt{alias [name[=value] ...]}
+  Пример:\\
+  \texttt{alias ls='rm -rf \$HOME'}\\
+  % ULIMIT
+  \item \textbf{\texttt{ulimit}} -- (eng. \textit{user limit}) -- установить или
+    отобразить ограничения для текущего командного интерпретатора и его потомков.
+  \begin{itemize}
+    \item \textbf{\texttt{-a}} -- выводить все ограничения
+    \item \textbf{\texttt{-u}} -- максимальное число запущенных этим
+     пользователем процессов
+    \item \textbf{\texttt{-n}} -- максимальное число открытых файлов
+    \item \textbf{\texttt{-f}} -- максимальный размер создаваемого файла
+    \item \textbf{\texttt{-v}} -- максимальный размер используемой виртуальной
+      памяти
+  \end{itemize}
+  Пример:\\\texttt{ulimit -n\\1024}
+  % UMASK
+  \item \textbf{\texttt{umask}} -- (eng. \textit{user mask}) -- получение или
+    установка маски режима создания файлов (какие биты прав доступа нужно сбросить
+    при создании последующих файлов).
+  \begin{itemize}
+    \item \textbf{\texttt{-S}} -- в символьном виде
+  \end{itemize}
+  Пример\\\texttt{umask\\022}
+  % GROUPS
+  \item \textbf{\texttt{groups}} -- (eng. \textit{groups}) -- выводит список
+    групп для указанных пользователей или текущего процесса.
+  Пример:\\\texttt{groups\\keker wheel}
+  % ID
+  \item \textbf{\texttt{id}} -- (eng. \textit{identificator}) -- информация об
+    указанном пользователе либо (если без параметров) о пользователе,
+    запустившем программу.
+  Пример:\\\texttt{id}\\
+  \texttt{uid=1000(keker) gid=1000(keker) groups=1000(keker),10(wheel) context=
+    unconfined\_u:unconfined\_r:unconfined\_t:s0-s0:c0.c1023}
+  % GETENT
+  \item \textbf{\texttt{getent}} -- (eng. \textit{get entries}) -- получает
+    элементы из административной базы данных.
+  Пример:\\\texttt{getent passwd keker\\keker:x:1000:1000:Jonathan Keker:/home/keker:/usr/bin/zsh}
+  % XARGS
+  \item \textbf{\texttt{xargs}} -- (eng. \textit{x arguments}) -- объединяет
+    зафиксированный набор заданных в командной строке начальных аргументов с
+    аргументами, прочитанными со стандартного ввода, и выполняет указанную
+    команду один или несколько раз.
+  \begin{itemize}
+    \item \textbf{\texttt{-l}} -- выполнять команду для каждой группы из
+      заданного числа непустых строк аргументов, прочитанных со стандартного
+      ввода
+    \item \textbf{\texttt{-n}} -- выполнить команду, используя n аргументов 
+  \end{itemize}
+  Пример:\\\texttt{echo 1 2 3 4 5 | xargs -n 2 echo}\\
+  \texttt{1 2\\3 4\\5}
 \end{itemize}
+\subsection{Переменные окружения}
+\par\noindent\rule{\textwidth}{0.4pt}
+\textbf{PWD, OLDPWD} - текущий и предыдущий каталоги. Устанавливаются при использовании
+команды cd. OLDWPD используется при команде cd с ключом -.
+
+\textbf{HOME} - домашний каталог, если cd вызвать без аргументов, то текущий каталог сменится на домашний.
+
+\textbf{PATH, MANPATH} - содержат пути, разделенные двоеточием, для поиска
+исполняемых файлов и страниц помощи man соответственно. Команда type использует
+переменную PATH при поиске пути для указанного аргумента.
+
+\textbf{CDPATH} - содержит список каталогов, разделенных двоеточием, в которых
+команда cd будет искать каталоги для перехода, если указанный путь в команде cd относительный.
+
+\textbf{PAGER} - терминальный пейджер по-умолчанию. Используется, например, man
+для отображения справки в предпочитаемом пейджере.
+
+\textbf{EDITOR} - редактор по-умолчанию. Используется программами, которые
+вызывают редактор, например, more и less (при использовании внтуренней команды
+v или crontab -e.
+
+\textbf{COLUMNS} - предпочитаемая пользователем ширина вывода для терминала.
+Используется такими утилитами, как ls для форматирования вывода на терминал.
+Если переменная не установлена, используется значение 80.
+
+\textbf{LANGUAGE, LC\_ALL, LC\_TIME, LC\_CTYPE, TZ, LC\_NUMERIC и т.п.} - 
+переменные окружения для локализации (задания часовых поясов и т.п).
+Используется, например, командой ls для задания локали для вывода времени.
+
+\subsection{Терминология}
+\par\noindent\rule{\textwidth}{0.4pt}
+\textbf{Команда} - выражение, составленное по правилам командного интерпретатора.
+Может состоять из различных операторов или имён программ. Командный интерпретатор
+занимается разбором таких выражений и их выполнением. Пример: VAR=1 VAR1=\$VAR
+или /usr/bin/cat message > /dev/pts/27
+
+\textbf{Микрокоманда} - элементарное действие из которого состоит команда.
+Каждая микрокоманда выполняется в течение одного машинного такта.
+
+\textbf{Нанокоманда} - каждой микрокоманде соответствует какая-то из нанокоманд.
+Нанокоманды используются для формирования сигналов управления при выполнении микрокоманды.
+
+\textbf{Утилита} - подмножество программ, предназначенных для работы в окружении
+операционной системы или её администрирования. Утилиты не выполняют прикладных
+задач, а лишь обеспечивают возможность работы пользователя или других программ
+в системе. Пример: /usr/bin/login или /usr/bin/chmod.
+
+\textbf{Программа} - исполняемый код или последовательность инструкций. Обычно
+программа представлена в виде исполняемого файла или сценария на языке командного
+интепретатора.
+
+\subsection{Вывод}
+\par\noindent\rule{\textwidth}{0.4pt}
+В ходе выполнения этой работы я осознал и исследовал некоторые команды.
+Стало ясно - команды в терминале это круто. С их помощью можно организовывать
+работу многопользовательских систем, работу с данными и т.п.
 \end{document}
