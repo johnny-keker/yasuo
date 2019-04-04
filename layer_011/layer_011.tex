@@ -1,0 +1,131 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[a4paper, includeheadfoot, mag=1000, left=2cm, right=1.5cm, top=1.5cm, bottom=1.5cm, headsep=0.8cm, footskip=0.8cm]{geometry}
+% Fonts
+\usepackage{fontspec, unicode-math}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[english, russian]{babel}
+% Indent first paragraph
+\usepackage{indentfirst}
+\setlength{\parskip}{5pt}
+% Diagrams
+\usepackage{graphicx}
+\usepackage{float}
+% Source code
+\usepackage{verbatim}
+% Page headings
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%\newfontfamily\namefont[Scale=1.2]{Gloria Hallelujah}
+\fancyhead{}
+\begin{document}
+
+% Title page
+\include{layer_011_titlepage}
+
+\section{Запуск и перевод команды в фоновый режим}
+\begin{itemize}
+  \item Запуск в фоновом режиме: \texttt{vim /etc/passwd \&}
+  \item Перевод в фоновый режим: \texttt{vim /etc/passwd | killall -STOP vimx | bg \%1}
+\end{itemize}
+
+\section{Описание изученных комманд}
+\begin{itemize}
+  \item \textbf{\texttt{ps}} -- (eng. \textit{process state}) -- утилита для просмотра
+    информации о работе текущих процессов в системе.
+    \begin{itemize}
+      \item \textbf{\texttt{-e}} : отображение всех активных процессов (по
+        умолчанию - только для текущей оболочки)
+      \item \textbf{\texttt{-x}} : отображение процессов, принадлежащих текущему
+        пользователю
+      \item \textbf{\texttt{-U}} : отобразить процессы, принадлежащие определенному
+        пользователю
+      \item \textbf{\texttt{-G}} : отобразать процессы, принадлежащие определенной
+        группе
+      \item \textbf{\texttt{-t}} : отобразить процессы по tty
+      \item \textbf{\texttt{--forest}} : отображать деревья процессов
+      \item \textbf{\texttt{-o}} : указать формат вывода
+      \item \textbf{\texttt{-C}} : выбрать конкретный процесс по имени (с дочерними)
+      \item \textbf{\texttt{--sort}} : выбрать параметр для сортировки
+    \end{itemize}
+    \texttt{ps -eo cmd,\%mem,\%cpu --sort=\%mem} : вывести самые дорогие
+    по используемой памяти процессы
+  \item \textbf{\texttt{crontab}} -- утилита для работы с \texttt{cron} - демоном,
+    использующимся для периодического выполнения заданий в определенное время
+    \begin{itemize}
+      \item {\textbf{\texttt{-l}}} : вывести содержание файла расписания для
+        текущего пользователя
+      \item {\textbf{\texttt{-r}}} : удалить текущий файл расписания
+      \item {\textbf{\texttt{-e}}} : редактировать текущий файл расписания
+    \end{itemize}
+    \texttt{crontab -e\\5 4 * * sun echo 'lets all love lain'}
+  \item \textbf{\texttt{at}} -- утилита для работы с \texttt{atd} - службой,
+    предназначенной для выполнения команд в заданное время.
+    \begin{itemize}
+      \item \textbf{\texttt{-l}} : показать список комманд, запланированных для
+        исполнения
+      \item \textbf{\texttt{-d}} : удалить команду из списка для исполнения
+    \end{itemize}
+    \texttt{echo 'lets all love lain' | at now + 1 minute}
+  \item \textbf{\texttt{nice}} -- запустить программу с измененным приоритетом
+    для планировщика задач. [-20, 20]
+    \begin{itemize}
+      \item \textbf{\texttt{-n}} : выставить niceness value
+    \end{itemize}
+    \texttt{nice -n -20 echo 'lets all love lain'}
+  \item \textbf{\texttt{nohup}} -- запустить указанную команду с игнорированием
+    сигналов о потере связи (\texttt{SIGHUP}), таким образом процесс продолжит
+    жить даже после выхода пользователя из системы
+    \texttt{nohup while true; do echo "lets all love lain"; sleep 1; done}
+  \item \textbf{\texttt{kill}} -- послать сигнал указанным процессам
+    \begin{itemize}
+      \item \textbf{\texttt{-s}} : указать посылаемый сигнал (по имени или номеру)
+      \item \textbf{\texttt{-l}} : вывести имена сигналов, поддерживаемых ОС
+    \end{itemize}
+    \texttt{kill -KILL 666}
+  \item \textbf{\texttt{fg}} -- перевести задачу из фонового режима\\
+    \texttt{fg 1}
+  \item \textbf{\texttt{bg}} -- продолжить выполнение задачи в фоновом режиме\\
+    \texttt{bg \%1}
+  \item \textbf{\texttt{jobs}} -- отображает фоновые задачи текущей сессии.
+    \begin{itemize}
+      \item \textbf{\texttt{-l}} : отображать \texttt{PID} задач
+      \item \textbf{\texttt{-n}} : отображать только задачи, изменившие свой
+        статус с последнего отображения
+      \item \textbf{\texttt{-p}} : отображать только \texttt{PID} задач
+    \end{itemize}
+    \texttt{jobs -l}
+  \item \textbf{\texttt{priocntl}} -- отобразить или задать параметры планировщика
+    для указанных процессов
+    \begin{itemize}
+      \item \textbf{\texttt{-l}} : отобразить классы, определенные в системе
+      \item \textbf{\texttt{-d}} : отобразать текущие параметры планировщика,
+        ассоциированные с процессами
+      \item \textbf{\texttt{-s}} : задать пааметры планировщика для определенных
+        процессов
+      \item \textbf{\texttt{-e}} : выполнить указанную комманды с указанными
+        классом и параметрами планировщика
+    \end{itemize}
+    \texttt{priocntl -l}
+  \item \textbf{\texttt{\&}} -- запускает процесс в фоновом режиме
+\end{itemize}
+
+\section{Основные сигналы}
+\begin{itemize}
+  \item \textbf{\texttt{SIGTERM}} : сигнал завершения процесса, посылается командой
+    kill по умолчанию
+  \item \textbf{\texttt{SIGKILL}} : немедленное завершение, нельзя перехватить
+    и обработать
+  \item \textbf{\texttt{SIGTSTP}} : приостановка процесса, Ctrl-Z. Переводит
+    процесс в режим остановки
+  \item \textbf{\texttt{SIGSTOP}} : \texttt{SIGTSTP}, который не может быть
+    проигнорирован или обработан
+  \item \textbf{\texttt{SIGCONT}} : возобновление выполнения процесса
+  \item \textbf{\texttt{SIGINT}} : сигнал прерывания, который посылается программе
+    с помощью нажатия специальной комбинации клавиш для прерывания программы
+    (обычно — Ctrl-C).
+\end{itemize}
+
+\end{document}
