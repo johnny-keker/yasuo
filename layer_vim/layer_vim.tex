@@ -1,0 +1,126 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[a4paper, includeheadfoot, mag=1000, left=2cm, right=1.5cm, top=1.5cm, bottom=1.5cm, headsep=0.8cm, footskip=0.8cm]{geometry}
+% Fonts
+\usepackage{fontspec, unicode-math}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[english, russian]{babel}
+% Indent first paragraph
+\usepackage{indentfirst}
+\setlength{\parskip}{5pt}
+% Diagrams
+\usepackage{graphicx}
+\usepackage{float}
+% Source code
+\usepackage{verbatim}
+% Page headings
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%\newfontfamily\namefont[Scale=1.2]{Gloria Hallelujah}
+\fancyhead{}
+\begin{document}
+
+% Title page
+\include{layer_vim_titlepage}
+\section{Режимы}
+\begin{itemize}
+  \item \texttt{NORMAL} - интерпретация ввода как команд навигации и работы с
+    текстом
+  \item \texttt{INSERT} - набор текста
+  \item \texttt{COMMAND LINE} - управление редактором
+  \item \texttt{VISUAL} - режим выделения текста
+\end{itemize}
+В режим \texttt{INSERT} из \texttt{NORMAL} можно перейти несколькими командами,
+в зависимости от положения начала ввода:
+\begin{itemize}
+  \item \texttt{i} - перед курсором
+  \item \texttt{a} - после курсора
+  \item \texttt{I} - в начале строки
+  \item \texttt{A} - в конце строки
+  \item \texttt{o} - на новой строке, после строки с курсором
+  \item \texttt{O} - на новой строке, до строки с курсором
+\end{itemize}
+Из \texttt{INSERT} в \texttt{NORMAL} переходят по нажатию клавиши \texttt{ESC},
+по нажатию \texttt{:} в режиме \texttt{NORMAL} происходит переход в режим
+\texttt{COMMAND LINE}, по нажатию \texttt{Ctrl-V} - в режим \texttt{VISUAL}
+
+\section{Работа с файлами}
+В режиме \texttt{COMMAND LINE}:
+\begin{itemize}
+  \item \texttt{w} - записать изменения в файл
+  \item \texttt{w <file>} - создать новый файл и записать в него
+  \item \texttt{w! <file>} - аналогично, но с разрешением на перезапись
+  \item \texttt{e} - считать файл с диска
+  \item \texttt{e <file>} - открыть файл для редактирования
+  \item \texttt{e!} - считать файл, не сохраняя изменения текущего
+\end{itemize}
+
+\section{Навигация}
+В режиме \texttt{NORMAL}:
+\begin{itemize}
+  \item \texttt{h, l, j, k} - курсор влево, вправо, вниз и вверх
+  \item \texttt{w} - к началу следующего слова
+  \item \texttt{b} - к началу предыдущего слова
+  \item \texttt{e} - к концу слова
+  \item \texttt{\$} - к концу строки
+  \item \texttt{0} - к началу строки
+  \item \texttt{\{} - к предыдущему параграфу
+  \item \texttt{\}} - к следующему параграфу
+  \item \texttt{gg} - к началу файла
+  \item \texttt{G} - к концу файла
+  \item \texttt{n G} - к строчке \texttt{n}
+\end{itemize}
+
+\section{Работа с текстом}
+В режиме \texttt{NORMAL}:
+\begin{itemize}
+\item \texttt{yy}: скопировать строку
+\item \texttt{dd}: вырезать строку
+\item \texttt{p}: вставить после курсора
+\item \texttt{P}: вставить перед курсором
+\item \texttt{J}: присоединить следующую строку к текущей
+\item \texttt{u}: отменить последнее изменение
+\end{itemize}
+
+\section{Поиск и замена}
+В режиме \texttt{COMMAND LINE} команда \texttt{/} инициирует поиск по тексту.
+\begin{itemize}
+  \item \texttt{:s/search/replace/}: заменить первое вхождение в текущей строке;
+  \item \texttt{:s/search/replace/g}: заменить все вхождения в текущей строке;
+  \item \texttt{:\%s/search/replace/}: заменить первое вхождение в каждой строке;
+  \item \texttt{:\%s/search/replace/g}: заменить все вхождения в тексте.
+\end{itemize}
+
+\section{Несколько файлов}
+В режиме \texttt{NORMAL}:
+\begin{itemize}
+  \item \texttt{e} - открыть файл
+  \item \texttt{ls} - отобразить открытые файлы
+  \item \texttt{b <file>} - переход к редактированию другого файла
+  \item \texttt{sp} - новое горизонтальное окно
+  \item \texttt{vs} - новое вертикальное окно
+  \item \texttt{Ctrl-w} - переключение между открытыми окнами
+  \item \texttt{tabnew} - новая вкладка
+  \item \texttt{tabe <file>} - открыть файл в новой вкладке
+  \item \texttt{tabnext, tabprevious} - навигация по вкладкам
+\end{itemize}
+
+\section{Параметры редактора}
+Файл \texttt{.vimrc} из домашней директории исполняется при каждом открытии
+редактора, в нем можно его конфигурировать, например выставлять определенные
+опции с помощью команды \texttt{set}.
+
+\texttt{set mouse=a} позволит включить навигацию по клику мыши во всех режимах
+ 
+\section{Выход}
+В режиме \texttt{NORMAL}:
+\begin{itemize}
+  \item \texttt{:q} - выйти, если нет несохраненных изменений;
+  \item \texttt{:q!} - выйти без сохранения изменений;
+  \item \texttt{:wq} - записать файл и выйти;
+  \item \texttt{:x} - записать файл, если есть несохраненные изменения, и выйти.
+\end{itemize}
+
+\end{document}
