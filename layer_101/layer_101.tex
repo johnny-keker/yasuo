@@ -1,0 +1,254 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[a4paper, includeheadfoot, mag=1000, left=2cm, right=1.5cm, top=1.5cm, bottom=1.5cm, headsep=0.8cm, footskip=0.8cm]{geometry}
+% Fonts
+\usepackage{fontspec, unicode-math}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[english, russian]{babel}
+% Indent first paragraph
+\usepackage{indentfirst}
+\setlength{\parskip}{5pt}
+% Diagrams
+\usepackage{graphicx}
+\usepackage{float}
+% Source code
+\usepackage{verbatim}
+% Page headings
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%\newfontfamily\namefont[Scale=1.2]{Gloria Hallelujah}
+\fancyhead{}
+\begin{document}
+
+% Title page
+\include{layer_101_titlepage}
+\section*{Первое задание}
+\begin{enumerate}
+  \item \verb|sed 's/Jon /Jonathan /' datebook| : команда \verb|s| заменит
+    первое вхождение \verb|Jon| на \verb|Jonathan|
+  \item \verb|sed '1,3d' datebook| : укажем диапазон строк и операцию \verb|d|
+    для удаления
+  \item \verb|sed '5,10!d'| : укажем диапазон и удалим все строки, которые
+    ему несоответствуют
+  \item \verb|sed '/Lane/d'| : укажем паттерн и команду удаления
+  \item \verb=sed '/.*11\|12\/.*\/.*/!d' datebook= : выберем все строки с помощью
+    регулярного выражения и удалим все строки, которые ему не соответствуют
+  \item \verb|sed 's/\(^Fred.*\)/\1\*\*\*/' datebook| : выберем все строки,
+    начинающиеся с \verb|Fred| и сохраним их полностью в первую группу, затем 
+    заменим вхождения на значение группы с добавлением \verb|***|
+  \item \verb|sed 's/.*Jose.*/JOSE HAS RETIRED/' datebook| : выберем все строки,
+    содержащие \verb|Jose| и заменим весь их текст на \verb|JOSE HAS RETIRED|
+  \item \verb|sed 's/\(^Popeye.*:\)\(.*\/.*\/.*\)\(:.*\)/\111\/14\/46\3/' datebook| :
+    разобьем строку на три группы - от \verb|Popeye| до начала даты рождения,
+    дату рождения и от конца даты рождения до конца строки. Заменим строки на
+    содержимое первой группы, \verb|11/14/46| и содержимое третьей
+  \item \verb|sed '/^$/d' datebook| : выберем все строки, между началом и концом
+    которых нет ни одного символа и удалим их
+  \item \verb|sed|\\
+        \verb|  -e '1s/^/TITLE OF THE FILE\n/'|\\
+        \verb|  -e 's/:[0-9]*[05]00$//g'|\\
+        \verb|  -e 's/^\([A-Za-z]*\) \([A-Za-z]*\):/\2 \1/g'|\\
+        \verb|  -e 's/$/ THE END/'|\\
+        \verb|datebook|\\
+        Заменим первое вхождение начала строки в файле на
+    нужную строчку с переносом строки, затем заменим на пустую строку
+    число в конце строки, если оно оканчивается на \verb|000| или \verb|500|,
+    затем выделим две группы - последовательность символов от начала строки до
+    пробела и после пробела до символа \verb|:| и заменим их на строку, в
+    которой эти группы поменяны местами, затем заменим каждый символ окончания
+    строки на нужную строку.
+\end{enumerate}
+
+\section*{Второе задание}
+\begin{enumerate}
+  \item \verb|sed '/north/p' datafile| : Выберет все строчки, содержащие подстроку
+    \verb|north|, при этом все строчки будут выведены, но указанные продублируются
+  \item \verb|sed -n '/north/p' datafile| : Выберет все строчки, содержащие
+    подстроку \verb|north|, при этом \verb|-n| подавит автоматический вывод буфера
+    и будут напечатаны только указанные строки
+  \item \verb|sed '3d' datafile| : Удалит из вывода третью строчку
+  \item \verb|sed '3,$d' datafile| : Удалит из вывода все строки начиная с третьей
+  \item \verb|sed '$d' datafile| : Удалит из вывода последнюю строчку
+  \item \verb|sed '/north/d' datafile| : Удалит из вывода все строки, содержащие
+    подстроку \verb|north|
+  \item \verb|sed 's/west/north/g' datafile| : Заменит в выводе все вхождения
+    подстроки \verb|west| на подстроку \verb|north|
+  \item \verb|sed -n 's/^west/north/p' datafile| : Выведет только строки,
+    начинающиеся с \verb|west|, при этом заменит \verb|west| на \verb|notrh|
+  \item \verb|sed 's/[0-9][0-9]$/&.5/' datafile| : Допишет ко всем строкам,
+    оканчивающиеся на 2 цифры \verb|.5|
+  \item \verb|sed -n 's/Hemenway/Jones/gp' datafile| : Выберет только строки,
+    содержащие подстроку \verb|Hemenway| и заменит \verb|Hemenway| на
+    \verb|Jones|
+  \item \verb|sed -n 's/\(Stag\)got/\1ianne/p' datafile| : Выведет только
+    строки, содержащие подстроку \verb|Staggot|, при этом заменит \verb|Staggot|
+    на \verb|Stagianne|
+  \item \verb|sed 's#14#88#g' datafile| : Заменит в выводе все подстроки
+    \verb|14| на \verb|88|
+  \item \verb|sed -n '/west/,/east/p' datafile| : Выведет только строки,
+    содержащиеся между подстроками \verb|west| и \verb|east|
+  \item \verb|sed -n '5,/^northeast/p' datafile| : Выведет строки с пятой по
+    первую, начинающуюся с \verb|northeast|
+  \item \verb|sed '/west/,/east/s/$/**WAKA**/' datafile| : Выберет все строки,
+    сожержащиеся между подстроками \verb|west| и \verb|east|, при этом допишет
+    в конец \verb|**WAKA**|
+  \item \verb|sed -e '1,3d' -e 's/Hemenway/Jones/' datafile| : Удалит из вывода
+    строки с первой по третью, при этом заменит в выводе подстроку \verb|Hemenway|
+    на \verb|Jones|
+  \item \verb|sed '/Suan/r newfile' datafile| : Выведет все строки, содержащие
+    подстроку \verb|Suan|, а затем содержимое файла \verb|newfile|
+  \item \verb|sed -n '/north/w newfile' datafile| : Запишет в \verb|newfile|
+    все строки, содержащие подстроку \verb|north|
+  \item \verb=sed '/^north /a\=\\
+    \verb=--->THE NORTH SALES DISTRICT HAS MOVED<---' datafile=
+    : После каждой
+    строки, начинающейся с \verb|north| допишет \verb|--->THE NORTH SALES DISTRICT HAS MOVED<---|
+  \item \verb|sed '/eastern/i\|\\
+    \verb|NEW ENGLAND REGION\|\\
+    \verb|-------------------------------------' datafile| : Перед каждой строкой,
+    содержащей подстроку \verb|eastern| выведет \verb|NEW ENGLAND REGION...|
+  \item \verb|sed '/eastern/c\|\\
+    \verb|THE EASTERN REGION HAS BEEN TEMPORARILY CLOSED' datafile| : Выведет
+    вместро строк, содержащих подстроку \verb|eastern| строку \verb|THE EASTERN...|
+  \item \verb|sed '/eastern/{ n; s/AM/Archie/; }' datafile| : Для строк, содежащих
+    подстроку \verb|eastern| в следующей строке заменить подстроку \verb|AM|
+    на \verb|Archie|
+  \item \verb|sed '2,4y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' datafile|
+    : Заменить регитср со второй по четвертую строчку
+  \item \verb|sed '2q' datafile| : Выйти из скрипта после вывода второй строки
+  \item \verb|sed '/Lewis/{ s/Lewis/Joseph/;q; }' datafile| : Для строк, содержащих
+    подсроку \verb|Lewis| произвести замену подстроки \verb|Lewis| на \verb|Joseph|
+    и выйти из скрипта
+  \item \verb|sed -e '/northeast/h' -e '$G' datafile| : Добавить в конец файла
+    строку, содержащую подстроку \verb|northeast|
+  \item \verb|sed -e '/WE/{h; d; }' -e '/CT/{G; }' datafile| : Вырезать строку,
+    содержащую подстроку \verb|WE| и вставить её после строки, содержащей
+    подстроку \verb|CT|
+  \item \verb|sed -e '/northeast/h' -e '$g' datafile| : Скопировать в конец
+    файла строку, содержащую подстроку \verb|northeast|
+  \item \verb|sed -e '/WE/{h; d; }' -e '/CT/{g; }' datafile| : см. п.\verb|27|
+  \item \verb|sed -e '/Patricia/h' -e '/Margot/x' datafile| : Заменить строку,
+    содержащую подстроку \verb|Margot| на строку, содержащую подстроку
+    \verb|Patricia|
+  \item \verb|sed -n '/sentimental/p' datafile| : Выведет строки, содержащие
+    подстроку \verb|sentimental|
+  \item \verb|sed '0,6d' datafile > newfile| : Запишет в файл \verb|newfile|
+    все строки \verb|datafile|, удалив при этом строки с нулевой по шестую,
+    но нумерация строк начинается с единицы, программа упадет
+  \item \verb|sed '/[Dd]aniel/d' datafile| : Удалит из вывода все строки,
+    содержащие подстроки \verb|Daniel| или \verb|daniel|
+  \item \verb|sed -n '19,20p' datafile| : Выведет 19-ю и 20-ю строки
+  \item \verb|sed '1,10s/Montana/MT/g' datafile| : В пределах с первой по десятую
+    строку заменит в выводе подстроку \verb|Montana| на \verb|MT|
+  \item \verb|sed '/March/!d' datafile| : Удалит из вывода все строки, не
+    содержащие подстроку \verb|March|
+  \item \verb|sed '/report/s/5/8/' datafile| : Во всех строках, содержащих
+    подстроку \verb|report| заменить \verb|5| на \verb|8|
+  \item \verb|sed 's/....//' datafile| : Удалить первые пять символов в каждой
+    строке
+  \item \verb|sed 's/...$//' datafile| : Удалить последние три символа в каждой
+    строке
+  \item \verb|sed '/east/,/west/s/North/South/' datafile| : Во множестве строк
+    между подстроками \verb|east| и \verb|west| заменить подстроку \verb|North|
+    на \verb|South|
+  \item \verb|sed -n '/Time off/w timefile' datafile| : Записать все строки,
+    содержащие подстроку \verb|Time off| в файл \verb|timefile|
+  \item \verb|sed 's/\([Oo]ccur\)ence/\1rence/' datafile| : Заменить подстроки
+    \verb|Occurence| или \verb|ocurence| на \verb|Occurrence| (или \verb|ocurrence|)
+  \item \verb|sed -n l datafile| : Вывести содержимое файла включая непечатные
+    символы
+\end{enumerate}
+\section*{Третье задание}
+\subsection*{Программа}
+\verb|  /Lewis/a\|\\
+\verb|  Lewis is the TOP Salesperson for April!!\|\\
+\verb|  Lewis is moving to the southern district next month.\|\\
+\verb|  CONGRATULATIONS!|\\
+\verb|  /Margot/c\|\\
+\verb|  *******************\|\\
+\verb|  MARGOT HAS RETIRED\|\\
+\verb|  ********************|\\
+\verb|  1i\|\\
+\verb|  EMPLOYEE DATABASE\|\\
+\verb|  ---------------------|\\
+\verb|  $d|\\
+\subsection*{Анализ}
+После строк, содержащих подстроку \verb|Lewis| добавляются строки 2-4\\
+Затем вместо строк, содержащих подстроку \verb|Margot| вставляются строки 5-8\\
+Перед первой строкой добавляются строки 10-11\\
+Затем удаляется последняя строка
+\subsection*{Программа}
+\verb|  /western/, /southeast/{|\\
+\verb|  /^ *$/d|\\
+\verb|  /Suan/{ h; d; }|\\
+\verb|  }|\\
+\verb|  /Ann/g|\\
+\verb|  s/TB \(Savage\)/Thomas \1/|\\
+\subsection*{Анализ}
+Для строк между подстроками \verb|western| и \verb|southeast| выполняется
+следующие действия:
+\begin{itemize}
+  \item Удаляются все пустые строки и строки состоящие из пробелов
+  \item Строка, содержащая подстроку \verb|Suan| копируется и удаляется
+\end{itemize}
+Затем после строки, содержащей подстроку \verb|Ann| вставляется скопированная
+строка\\
+Затем подстрока \verb|TB Savage| заменяется на \verb|Tomas Savage|
+\section*{Четвертое задание}
+\verb|war=peace;|\\
+\verb|sleep=cat;|\\
+\verb|ask=man;|\\
+\verb|freedom=slavery;|\\
+\verb|whole=tee;|\\
+\verb|or=more;|\\
+\verb|ignorance=strength;|\\
+\verb|life=pain;|\\
+\verb|die=cat;|\\
+\verb|echo "Don't worry! ";|\\
+\verb|dd if=/dev/urandom \|\\
+\verb|bs=17|\verb| count=1 2>/dev/null| \verb= |openssl base64 |=\\
+\verb=less|$sleep | more|tee|$or|$die | gsed ':s;=\\
+\verb=s/\(^\|\n\)\([^\n]\)\([^\n]*\)$/\1\2\n\3/;=\\
+\verb=ts'|gsed -r -n 'x;s/^.*$/iiiiiii/;x;  :s;N;=\\
+\verb|x;s/^i(i*)$/\1/;x;ts;s/\n//g; s/^.{3}/!?+/;|\\
+\verb|y!?\!+!lAl!;     s/^(.{3}).(....)./\1 \2 /;|\\
+\verb|s/ ./ wi/;s/i./i/;h;s/.(.{2}).*/\1/;     G;|\\
+\verb|s/^(.*)\n(....{3})(..)(.*)$/\2\1\4/;     x;|\\
+\verb|s/^.*$/+123Mec/;x;:t;N;12{s/(.{13})./\1 /};|\\
+\verb|11{s/.$/b!/};s/..(b)(!)/\1e\2\2\2/;     :r;|\\
+\verb|s/!//;tr;x;s/^.//;x;tt;   s/(.).{2}$/\1\n/;|\\
+\verb|s/\n//g;       17{s/[a-zA-Z0-9=]{4}$/#+?=/;|\\
+\verb|y.=?.ie.;    x;   s!^.*$!?>d!;    x;    :f;|\\
+\verb|s/(.)i([^i]*)$/i\1\2/;x;th;:h; ss.ss;x; tf;|\\
+\verb|s/e(i).../e \1n/; s/i[^l]/f&/};s$\$$.$;p'&&|\\
+\verb|$ask https://vk.com/id248059105 with love \\|\\
+\verb=2>&1 |tail -1 ;=\\
+\verb|alias cd=exit ;kill -STOP $$|\\
+\subsection*{Анализ}
+\begin{itemize}
+  \item Сначала задается какое-то количество переменных
+  \item Затем на экран выводится текст \verb|Don't worry!|
+  \item Команда \verb|dd| копирует 17 байт из \verb|/dev/urandom|
+  \item Openssl base64 декодирует байты в символы
+  \item \verb=less|cat|more|tee|more|cat= не выполнит полезной работы,
+    останутся те же 17 байт
+  \item \verb|gsed ':s;|\\
+    \verb=s/\(^\|\n\)\([^\n]\)\([^\n]*\)$/\1\2\n\3/= выведет каждый символ на
+    отдельной строке
+  \item \verb=gsed -r -n 'x;s/^.*$/iiiiiii/;x;  :s;N= заменит каждый символ
+    на 7 символов \verb|i| (теперь входные данные не играют роли), затем\\
+    \verb|x;s/^i(i*)$/\1/;x;ts;s/\n//g;| заменит удалит переносы строк и заменит
+    последовательность на 6 символов \verb|i|
+  \item \verb|s/^.{3}/!?+/;y!?\!+!lAl!;| заменит первые три символа на \verb|!?+|
+    и с помощью посимвольной замены получится \verb|All|
+  \item \verb|s/^(.{3}).(....)./\1 \2 /;s/ ./ wi/;| создаст слово \verb|will|
+  \item \verb|s/..(b)(!)/\1e\2\2\2/;| создаст слово \verb|be|
+  \item \verb|y.=?.ie.;| создаст слово \verb|fine|, получится фраза
+    \verb|All will be fine|
+  \item \verb|man https://vk.com/id248059105 with love 2>&1| - привет Валере
+  \item \verb|alias cd=exit| - спасибо, очень полезно
+  \item \verb|kill -STOP| - посылает сигнал остановки
+\end{itemize}
+\end{document}

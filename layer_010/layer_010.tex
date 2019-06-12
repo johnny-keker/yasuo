@@ -1,0 +1,80 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[a4paper, includeheadfoot, mag=1000, left=2cm, right=1.5cm, top=1.5cm, bottom=1.5cm, headsep=0.8cm, footskip=0.8cm]{geometry}
+% Fonts
+\usepackage{fontspec, unicode-math}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[english, russian]{babel}
+% Indent first paragraph
+\usepackage{indentfirst}
+\setlength{\parskip}{5pt}
+% Diagrams
+\usepackage{graphicx}
+\usepackage{float}
+% Source code
+\usepackage{verbatim}
+% Page headings
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%\newfontfamily\namefont[Scale=1.2]{Gloria Hallelujah}
+\fancyhead{}
+\begin{document}
+
+% Title page
+\include{layer_010_titlepage}
+
+\section{О chgrp}
+\textbf{\texttt{chgrp}} -- (eng. \textit{change group}) -- поменять
+    группу пользователей, владеющих файлом. \texttt{chrp [OPTION]... GROUP FILE...}
+\begin{itemize}
+    \item \textbf{\texttt{-v, --verbose}} -- показывать информационное сообщение
+      о каждом обработанном файле
+    \item \textbf{\texttt{-c, --changes}} -- показывать информационное сообщение
+      только в случае успешной обработки
+    \item \textbf{\texttt{-f, --silent, --quiet}} -- подавлять большинство
+      сообщений об ошибках
+    \item \textbf{\texttt{--reference}} -- выставить группу
+      согласно другому файлу
+    \item \textbf{\texttt{-R, --recursive}} -- модифицировать файлы и директории
+      рекурсивно
+\end{itemize}
+
+\section{nroff и troff}
+Системы форматирования текстов, которые включают в себя язык разметки. Получают
+на вход текст, содержащий макросы и директивы и преобразуют его.
+
+nroff является неотъемлемой частью Unix-подобных систем, так как система справок
+(man) опирается на него. troff добавляет дополнительную функциональность языку
+разметки nroff, при этом nroff в тексте будет игнорировать директивы, которые
+он не способен исполнить.
+
+\section{Текст руководства}
+{\scriptsize \verbatiminput{yasuo-chgrp.1}}
+
+\section{Описание директив}
+\begin{itemize}
+  \item \textbf{\texttt{.TH}} -- заголовок man-страницы.
+  \item \textbf{\texttt{.SH}} -- новый раздел
+  \item \textbf{\texttt{.SS}} -- новый подраздел
+  \item \textbf{\texttt{.PP}} -- новый параграф
+  \item \textbf{\texttt{.TP}} -- TermParagraph
+  \item \textbf{\texttt{.B}} -- жирный текст
+  \item \textbf{\texttt{.I}} -- курсив
+\end{itemize}
+
+\section{Изменения стартового командного файла}
+\begin{verbatim}
+export MANPATH=/home/keker/code/yasuo/layer_010/man:$MANPATH
+\end{verbatim}
+
+\section{Результат}
+{\scriptsize \verbatiminput{file}}
+
+\section{Вывод}
+В ходе выполнения данной лабораторной работы я познакомился с системой
+форматирования текстов \texttt{nroff}, составил и описал на языке \texttt{roff}
+страницу для \texttt{man} и зарегистрировал её.
+
+\end{document}
