@@ -1,0 +1,106 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[a4paper, includeheadfoot, mag=1000, left=2cm, right=1.5cm, top=1.5cm, bottom=1.5cm, headsep=0.8cm, footskip=0.8cm]{geometry}
+% Fonts
+\usepackage{fontspec, unicode-math}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[english, russian]{babel}
+% Indent first paragraph
+\usepackage{indentfirst}
+\setlength{\parskip}{5pt}
+% Diagrams
+\usepackage{graphicx}
+\usepackage{float}
+% Source code
+\usepackage{verbatim}
+\usepackage{listings}
+% Page headings
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%\newfontfamily\namefont[Scale=1.2]{Gloria Hallelujah}
+\fancyhead{}
+\begin{document}
+
+% Title page
+\include{layer_110_titlepage}
+\section*{Первое задание}
+\begin{enumerate}
+  \item Выведите все номера телефонов:\\
+    \verb|awk -F ":" '{print $2}' db|\\
+    \verb|-F| задает разделитель, выводим вторую колонку
+  \item Выведите номер телефона, принадлежащий сотруднику Dan:\\
+    \verb|awk -F ":" '/^Dan/ {print $2}' db|\\
+    Аналогично предыдущему, но ищем строки, начинающиеся с подстроки \verb|Dan|
+  \item Выведите имя, фамилию и номер телефона сотрудницы Susan:\\
+    \verb|awk -F ":" '/^Susan/ {print $1, $2}' db|\\
+    Аналогично предыдущим примерам, но выведем первую и вторую колонки
+  \item Выведите все фамилии, начинающиеся с буквы D\\
+    \verb|awk -F "[ :]" '$2~/^D.*/ {print $2}' db|\\
+    Зададим разделитель регулярным выражением, проверим что вторая колонка
+    начинается с \verb|D|, если это так выведем её
+  \item Выведите все имена, начинающиеся с буквы C или E\\
+    \verb|awk '/^[CE].*/ {print $1}' db|\\
+    Аналогично предыдущему, проверим, что строка начинается с \verb|C| или
+    \verb|E|, выведем первую колонку, если это так
+  \item Выведите все имена, состоящие только из четырех букв\\
+    \verb|awk '/^.... .*/ {print $1}' db|\\
+    Если строка подпадает под регулярное выражение - выведем первую колонку
+  \item Выведите имена сотрудников, префикс номера телефона которых 916\\
+    \verb|awk '/\(916\)/ {print $1}' db|\\
+    Аналогично предыдущему
+  \item Выведите денежные вклады сотрудника Mike, предваряя каждую сумму знаком \$\\
+    \verb|awk -F ":" '/^Mike/ {printf("$%s, $%s, $%s\n", $3, $4, $5)}' db|\\
+    Воспользуемся функцией \verb|printf| чтобы отформатировать строку согласно
+    заданию
+  \item Выведите инициалы всех сотрудников\\
+    \verb|awk '{printf("%s. %s.\n", substr($1, 1, 1), substr($2, 1, 1))}' db|\\
+    Воспользуемся функцией \verb|substr| для того, чтобы достать инициалы
+  \item Создайте командный файл awk, который:
+    \begin{enumerate}
+      \item Печатает полные имена и номера телефонов всех сотрудников по фамилии Savage
+      \item Печатает денежные вклады сотрудника по имени Chet
+      \item Печатает сотрудников, денежные вклады которых в первом месяце составили 250\$
+      \item Подсчитывает сумму вкладов за каждый месяц в отдельности и вывести это в виде оформленной таблицы
+      \item Подсчитывает средний вклад за каждый месяц и выводит результаты округлённо до второго знака после запятой
+      \item В конце вывести текущее время и результат выполнения команды ls
+    \end{enumerate}
+    \lstinputlisting{task.awk}
+\end{enumerate}
+\section*{Второе задание}
+\begin{enumerate}
+  \item \verb|nawk '/west/' datafile| : Выведет строки, содержащие подстроку
+    \verb|west|
+  \item \verb|nawk '/^north/' datafile| : Выведет строки, начинающиеся с
+    \verb|north|
+  \item \verb=nawk '/^(no|so)/' datafile= : Выведет строки, начинающиеся с
+    \verb|no| или \verb|so|
+  \item \verb|nawk '{print $3, $2}' datafile| : Выведет третью и вторую колонку
+    строчек через разделитель
+  \item \verb|nawk '{print $3 $2}' datafile| : Выведет третью и вторую колонку
+    строчек слитно
+  \item \verb|nawk '{print $0}' datafile| : Выведет строки без изменений
+  \item \verb|nawk '{print "Number of fields: "NF}' datafile| : Выведет количество
+    колонок в каждой строке
+  \item \verb|nawk '/northeast/{print $3, $2}' datafile| : Выведет 3 и 2 колонки
+    строчек, содержащих подстроку \verb|northeast|
+  \item \verb|nawk '/E/' datafile| : Выведет все строки, содержащие подстроку \verb|Е|
+  \item \verb|nawk '/^[ns]/{print $1}' datafile| : Выведет первую колонку строки,
+    если она начинается с \verb|n| или \verb|s|
+  \item \verb|nawk '$5 ~ /\.[7-9]+/' datafile| : Выведет строку, если пятая
+    колонка содержит подстроку - точка и одно или более число от 7 до 9
+  \item \verb|nawk '$2 !~ /E/{print $1, $2}' datafile| : Выведет первую и вторую
+    колонку, если вторая колонка не содержит подстроку \verb|E|
+  \item \verb|nawk '$3 ~ /^Joel/{print $3 " is a nice guy."}' datafile| :
+    Если третья колонка начинается с \verb|Joel|, то выведем ее и припишем
+    \verb| is a nice guy.|
+  \item \verb|nawk '$8 ~ /[1-9][0-2]$/{print $8}' datafile| : Если восьмая колонка
+    кончается на число от 1 до 9 за которым следует число от 0 до 2 - выведем её
+  \item \verb|nawk '$4 ~ /Chin$/{print "The price is $" $8 "."}' datafile| :
+    Если четвертая колонка кончается на \verb|Chin| - выведем "The price is \$"
+    и значение восьмой колонки
+  \item \verb|nawk '/TJ/{print $0}' datafile| : Вывести все строки, содержащие
+    подстроку \verb|TJ|
+\end{enumerate}
+\end{document}
