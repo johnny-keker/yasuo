@@ -40,7 +40,16 @@ function where_are_you_func {
 function what_is_here_func {
   echo "  You want to know what is here? There is:" | pv -qL $typing_speed
   contents=`ls`
-  echo "  $contents" | pv -qL $typing_speed
+  echo $contents | pv -qL $typing_speed
+  echo
+}
+
+function create_place_func {
+  echo "  You want to create a new place? Then you need to give it a name"
+  echo -n "  Enter the name of the new place: "
+  read dir_name
+  mkdir -p $dir_name
+  echo "  $dir_name created!"
   echo
 }
 
@@ -53,6 +62,9 @@ do
       ;;
     $what_is_here)
       what_is_here_func
+      ;;
+    $create_place)
+      create_place_func
       ;;
     *)
       echo "heh"
