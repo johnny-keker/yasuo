@@ -4,6 +4,12 @@ function greeting {
   echo -e "   --- Hello "$USER"! ---\n
   This script is extremely powerfull,
   and you are free to choose one of
-  the options below:" | pv -qL 11
+  the options below:\n
+  -- 1 to find out where are you
+  -- 2 to see what is here
+  -- 3 to create a new place
+  -- 4 to travel to a place
+  -- 5 to destroy the place
+  -- 6 to leave" | pv -qL 11
 }
 greeting
