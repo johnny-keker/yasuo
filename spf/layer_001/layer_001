@@ -1,5 +1,9 @@
 #!/bin/bash
 
-echo -e "--- Hello "$USER"! ---\n\nThis script is extremely powerfull,
-and you are free to choose one of
-the options below:" | pv -qL 11
+function greeting {
+  echo -e "   --- Hello "$USER"! ---\n
+  This script is extremely powerfull,
+  and you are free to choose one of
+  the options below:" | pv -qL 11
+}
+greeting
