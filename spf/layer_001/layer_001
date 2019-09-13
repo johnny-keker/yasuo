@@ -59,9 +59,16 @@ function create_place_func {
 
 function travel_func {
   say "You want to travel? Then you need to set a destination"
-  ask "Enter the destination name:", destination
+  ask "Enter the destination name:" destination
   cd $destination
   say "Now we are in "$PWD"!"
+  echo
+}
+
+function destroy_func {
+  say "You want to destroy some place?"
+  ask "What place do you want to destroy?" destination
+  rm -ri $destination
   echo
 }
 
@@ -80,6 +87,9 @@ do
       ;;
     $travel)
       travel_func
+      ;;
+    $destroy)
+      destroy_func
       ;;
     *)
       echo "heh"
