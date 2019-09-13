@@ -18,7 +18,7 @@ function say {
 
 function ask {
   echo $1 | pv -qL $typing_speed
-  read $2
+  read $2 || exit
 }
 
 function the_offer {
