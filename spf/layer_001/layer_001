@@ -1,15 +1,27 @@
 #!/bin/bash
 
-function greeting {
-  echo -e "   --- Hello "$USER"! ---\n
+choice=0
+leave=6
+
+function the_offer {
+  echo "   --- Hello "$USER"! ---
+
   This script is extremely powerfull,
   and you are free to choose one of
-  the options below:\n
+  the options below:
+
   -- 1 to find out where are you
   -- 2 to see what is here
   -- 3 to create a new place
   -- 4 to travel to a place
   -- 5 to destroy the place
   -- 6 to leave" | pv -qL 11
+  echo -n "
+  So, what would it be? " | pv -qL 11
+  read choice
 }
-greeting
+
+while [ $choice != $leave ]
+do
+  the_offer
+done
