@@ -11,11 +11,11 @@ destroy=5
 leave=6
 
 function say {
-  echo $1 | pv -qL $typing_speed
+  echo "$1" | pv -qL $typing_speed
 }
 
 function ask {
-  echo -n $1 | pv -qL $typing_speed
+  echo $1 | pv -qL $typing_speed
   read $2
 }
 
@@ -33,27 +33,35 @@ function the_offer {
   say "  -- 5 to destroy the place"
   say "  -- 6 to leave"
   echo
-  ask "So, what would it be? " choice
+  ask "So, what would it be?" choice
   echo
 }
 
 function where_are_you_func {
   say "You want to know where are you?"
-  say "  You are in "$PWD""
+  say "You are in "$PWD""
   echo
 }
 
 function what_is_here_func {
   say "You want to know what is here? There is:"
-  say `ls`
+  ls | pv -qL $typing_speed
   echo
 }
 
 function create_place_func {
   say "You want to create a new place? Then you need to give it a name"
-  ask "Enter the name of the new place: " dir_name
+  ask "Enter the name of the new place:" dir_name
   mkdir -p $dir_name
   say "$dir_name created!"
+  echo
+}
+
+function travel_func {
+  say "You want to travel? Then you need to set a destination"
+  ask "Enter the destination name:", destination
+  cd $destination
+  say "Now we are in "$PWD"!"
   echo
 }
 
@@ -69,6 +77,9 @@ do
       ;;
     $create_place)
       create_place_func
+      ;;
+    $travel)
+      travel_func
       ;;
     *)
       echo "heh"
