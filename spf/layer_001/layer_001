@@ -10,6 +10,8 @@ travel=4
 destroy=5
 leave=6
 
+trap goodbye INT
+
 function say {
   echo "$1" | pv -qL $typing_speed
 }
@@ -72,6 +74,18 @@ function destroy_func {
   echo
 }
 
+function unknown_func {
+  say "Some choices are not easy to take, but you should choose"
+  say "one of available options"
+  echo
+}
+
+function goodbye {
+  echo
+  say "Goodbye "$USER"!"
+  exit
+}
+
 while [ $choice != $leave ]
 do
   the_offer
@@ -92,7 +106,7 @@ do
       destroy_func
       ;;
     *)
-      echo "heh"
+      unknown_func
       ;;
   esac
 done
