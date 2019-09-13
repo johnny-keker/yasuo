@@ -10,46 +10,50 @@ travel=4
 destroy=5
 leave=6
 
+function say {
+  echo $1 | pv -qL $typing_speed
+}
+
+function ask {
+  echo -n $1 | pv -qL $typing_speed
+  read $2
+}
+
 function the_offer {
-  echo "   --- Hello "$USER"! ---
-
-  This script is extremely powerfull,
-  and you are free to choose one of
-  the options below:
-
-  -- 1 to find out where are you
-  -- 2 to see what is here
-  -- 3 to create a new place
-  -- 4 to travel to a place
-  -- 5 to destroy the place
-  -- 6 to leave" | pv -qL $typing_speed
-  echo -n "
-  So, what would it be? " | pv -qL $typing_speed
-  read choice
+  say "--- Hello "$USER"! ---"
+  echo
+  say "This is extremely powerfull script,"
+  say "and you are free to choose one of"
+  say "the options below:"
+  echo
+  say "  -- 1 to find out where are you"
+  say "  -- 2 to see what is here"
+  say "  -- 3 to create a new place"
+  say "  -- 4 to travel to a place"
+  say "  -- 5 to destroy the place"
+  say "  -- 6 to leave"
+  echo
+  ask "So, what would it be? " choice
   echo
 }
 
 function where_are_you_func {
-  echo "  You want to know where are you?" | pv -qL $typing_speed
-  echo -n "  You are in " | pv -qL $typing_speed
-  location="$PWD"
-  echo $location | pv -qL $typing_speed
+  say "You want to know where are you?"
+  say "  You are in "$PWD""
   echo
 }
 
 function what_is_here_func {
-  echo "  You want to know what is here? There is:" | pv -qL $typing_speed
-  contents=`ls`
-  echo $contents | pv -qL $typing_speed
+  say "You want to know what is here? There is:"
+  say `ls`
   echo
 }
 
 function create_place_func {
-  echo "  You want to create a new place? Then you need to give it a name"
-  echo -n "  Enter the name of the new place: "
-  read dir_name
+  say "You want to create a new place? Then you need to give it a name"
+  ask "Enter the name of the new place: " dir_name
   mkdir -p $dir_name
-  echo "  $dir_name created!"
+  say "$dir_name created!"
   echo
 }
 
