@@ -37,12 +37,22 @@ function where_are_you_func {
   echo
 }
 
+function what_is_here_func {
+  echo "  You want to know what is here? There is:" | pv -qL $typing_speed
+  contents=`ls`
+  echo "  $contents" | pv -qL $typing_speed
+  echo
+}
+
 while [ $choice != $leave ]
 do
   the_offer
   case $choice in
     $where_are_you)
       where_are_you_func
+      ;;
+    $what_is_here)
+      what_is_here_func
       ;;
     *)
       echo "heh"
