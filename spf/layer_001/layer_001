@@ -86,7 +86,7 @@ function goodbye {
   exit
 }
 
-while [ $choice != $leave ]
+while true
 do
   the_offer
   case $choice in
@@ -95,6 +95,7 @@ do
     $create_place) create_place_func;;
     $travel) travel_func;;
     $destroy) destroy_func;;
+    $leave) goodbye;;
     *) unknown_func;;
   esac
 done
