@@ -25,9 +25,9 @@ function ask {
   if [ $NOTYPE -eq "1" ]; then
     echo "$1"
   else
-    echo $1 | pv -qL $typing_speed
+    echo "$1" | pv -qL $typing_speed
   fi
-  read $2 || goodbye
+  IFS="" read $2 || goodbye
 }
 
 function handle_error {
@@ -54,16 +54,16 @@ function the_offer {
 
 function where_are_you_func {
   say "You want to know where you are?"
-  say "You are in "$PWD""
+  say "You are in "`pwd`
   echo
 }
 
 function what_is_here_func {
   say "You want to know what is here? There is:"
   if [ $NOTYPE -eq "1" ]; then
-    ls
+    ls -b
   else
-    ls | pv -qL $typing_speed
+    ls -b | pv -qL $typing_speed
   fi
   echo
 }
@@ -71,7 +71,7 @@ function what_is_here_func {
 function create_place_func {
   say "You want to create a new place? Then you need to give it a name"
   ask "Enter the name of the new place:" dir_name
-  mkdir -p $dir_name 2>>$log_file | handle_error "Cannot create a place, please check the permissions"
+  mkdir -p "$dir_name" 2>>$log_file || handle_error "Cannot create a place, please check the permissions" && return
   say "$dir_name created!"
   echo
 }
@@ -79,15 +79,21 @@ function create_place_func {
 function travel_func {
   say "You want to travel? Then you need to set a destination"
   ask "Enter the destination name:" destination
-  cd $destination 2>>$log_file | handle_error "Cannot travel, check if the place exists"
-  say "Now we are in "$PWD"!"
+  cd -- "$destination" 2>>$log_file || handle_error "Cannot travel, check if the place exists" && return
+  say "Now we are in `pwd`"
   echo
 }
 
 function destroy_func {
   say "You want to destroy some place?"
   ask "What place do you want to destroy?" destination
-  rm -ri $destination 2>>$log_file | handle_error "Cannot destroy, check if place exists"
+  if [ $destination == "." ]; then
+    dir_name=`basename "$PWD"`
+    cd ..
+    rm -ri `pwd`/$dir_name
+  else
+    rm -ri $destination 2>>$log_file || handle_error "Cannot destroy, check if place exists" && return
+  fi
   echo
 }
 
