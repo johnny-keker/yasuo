@@ -1,1 +1,1 @@
-awk -F ':' '{l=split($4,a,":"); if (l>0) print $1;}' /etc/group
+awk -v n=$NUM_USERS -F ':' '{l=split($4,a,":"); if (l>n) print $1;}' /etc/group
