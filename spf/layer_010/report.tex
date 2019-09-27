@@ -1,0 +1,60 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[a4paper, includeheadfoot, mag=1000, left=2cm, right=1.5cm, top=1.5cm, bottom=1.5cm, headsep=0.8cm, footskip=0.8cm]{geometry}
+% Fonts
+\usepackage{fontspec, unicode-math}
+\setmainfont[Ligatures=TeX]{CMU Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[english, russian]{babel}
+% Indent first paragraph
+\usepackage{indentfirst}
+\setlength{\parskip}{5pt}
+% Diagrams
+\usepackage{graphicx}
+\usepackage{float}
+% Page headings
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{16pt}
+%\newfontfamily\namefont[Scale=1.2]{Gloria Hallelujah}
+\fancyhead{}
+
+\usepackage{listings}
+\begin{document}
+
+% Title page
+\begin{titlepage}
+\begin{center}
+
+\textsc{National Research University ITMO\\[4mm]
+Faculty of Software Engineering and Compyter Systems}
+\vfill
+\textbf{Labwork №2 [3]\\[4mm]
+System Software Fundamentals\\[16mm]
+}
+Ivan Sarzhevskiy
+\\[2mm]Group P3302
+\vfill
+Saint Petersburg\\[2mm]
+2019 г.
+
+\end{center}
+\end{titlepage}
+
+\section*{Assignment}
+Develop two shell scripts that will list:
+\begin{itemize}
+  \item Names of directories that contains more than one subdirectory sorted
+    by modification time
+  \item Names of groups that contains more than X users
+\end{itemize}
+
+\section*{Scripts code}
+\subsection*{First Task}
+\lstinputlisting{layer_010_1}
+
+
+\subsection*{Second Task}
+\lstinputlisting{layer_010_2}
+\end{document}
+
