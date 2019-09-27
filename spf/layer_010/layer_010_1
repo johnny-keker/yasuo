@@ -1,0 +1,1 @@
+ls -lat | grep "^d" | tr -s ' ' | cut -d ' ' --fields=2,9 | grep -v "^2" | cut -d ' ' -f 2 | grep -v "[\.|\.\.]"
