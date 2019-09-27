@@ -1,5 +1,5 @@
 echo "First Task:"
-ls -lat | grep -v "^total" | grep -v "^-" | tr -s ' ' | cut -d ' ' --fields=2,9 | grep -v "^2" | cut -d ' ' -f 2 | grep -v "[\.|\.\.]"
+ls -lat | grep "^d" | tr -s ' ' | cut -d ' ' --fields=2,9 | grep -v "^2" | cut -d ' ' -f 2 | grep -v "[\.|\.\.]"
 echo
 echo "Second task:"
 awk -v n=$NUM_STUDS -F ':' '{l=split($4,a,","); if (l>n) print $1;}' /etc/group
