@@ -1,1 +1,1 @@
-awk -v n=$NUM_USERS -F ':' '{l=split($4,a,","); if (l>n) print $1;}' /etc/group
+getent group | /usr/xpg4/bin/awk -v n=$NUM_USERS -F '::' '{l=split($2,a,","); if (l>n) print $1;}' | sort
