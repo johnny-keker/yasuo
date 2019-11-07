@@ -1,5 +1,5 @@
 GCC = gcc
-FLAGS = -Wall -Wextra --std=gnu99 -pedantic -Werror
+FLAGS = -Wall -Wextra --std=gnu99 -pedantic -Werror -g
 
 all : tail
 
