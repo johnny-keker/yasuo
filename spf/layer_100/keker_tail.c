@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
   char* contents;
 
   if (optind != argc && *argv[optind] != '-') {
-    if (optind == argc + 1) {
+    if (optind + 1 == argc) {
       int fd = open(argv[optind], O_RDONLY);
       if (errno != 0) {
         char* error = strerror(errno);
