@@ -58,12 +58,35 @@ int main(int argc, char *argv[]) {
   char* contents;
 
   if (optind != argc && *argv[optind] != '-') {
-    int fd = open(argv[optind], O_RDONLY);
-    contents = get_file_contents(fd);
-    close(fd);
+    if (optind == argc + 1) {
+      int fd = open(argv[optind], O_RDONLY);
+      contents = get_file_contents(fd);
+      close(fd);
+      print_last_n_lines(contents, num_lines);
+    }
+    else {
+      for (int i = optind; i < argc; ++i) {
+        if (*argv[i] == '-') {
+          write(STDOUT_FILENO, "==> standard input <==\n", 23);
+          contents = get_file_contents(STDIN_FILENO);
+          print_last_n_lines(contents, num_lines);
+          write(STDOUT_FILENO, "\n", 1);
+        }
+        else {
+          write(STDOUT_FILENO, "==> ", 4);
+          write(STDOUT_FILENO, argv[i], strlen(argv[i]));
+          write(STDOUT_FILENO, "<==\n", 4);
+          int fd = open(argv[i], O_RDONLY);
+          contents = get_file_contents(fd);
+          close(fd);
+          print_last_n_lines(contents, num_lines);
+          write(STDOUT_FILENO, "\n", 1);
+        }
+      }
+    }
   }
   else {
     contents = get_file_contents(STDIN_FILENO);
+    print_last_n_lines(contents, num_lines);
   }
-  print_last_n_lines(contents, num_lines);
 }
