@@ -3,13 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <stdbool.h>
 
 const int BUFSIZE = 4096;
+const char* INVALID_NUM = "Cant parse given number\n";
 
-int parse_int(const char* str, long* var) {
+bool parse_int(const char* str, long* var) {
   char* end;
   *var = strtol(str, &end, 10);
-  return 0;
+  if (end == str) return false;
+  return true;
 }
 
 char* get_file_contents(int fd) {
@@ -46,12 +50,15 @@ void print_last_n_lines(char* contents, int n) {
 
 int main(int argc, char *argv[]) {
   int opt = 0;
-  long num_lines = 0;
+  long num_lines = 10;
 
   while ((opt = getopt(argc, argv, "n:")) != -1) {
     switch (opt) {
       case 'n':
-        parse_int(optarg, &num_lines);
+        if (!parse_int(optarg, &num_lines)) {
+          write(STDERR_FILENO, INVALID_NUM, strlen(INVALID_NUM));
+          return 1;
+        }
         break;
     }
   }
@@ -60,6 +67,12 @@ int main(int argc, char *argv[]) {
   if (optind != argc && *argv[optind] != '-') {
     if (optind == argc + 1) {
       int fd = open(argv[optind], O_RDONLY);
+      if (errno != 0) {
+        char* error = strerror(errno);
+        write(STDERR_FILENO, error, strlen(error));
+        write(STDERR_FILENO, "\n", 1);
+        return 1;
+      }
       contents = get_file_contents(fd);
       close(fd);
       print_last_n_lines(contents, num_lines);
@@ -73,10 +86,16 @@ int main(int argc, char *argv[]) {
           write(STDOUT_FILENO, "\n", 1);
         }
         else {
+          int fd = open(argv[i], O_RDONLY);
+          if (errno != 0) {
+            char* error = strerror(errno);
+            write(STDERR_FILENO, error, strlen(error));
+            write(STDERR_FILENO, "\n", 1);
+            return 1;
+          }
           write(STDOUT_FILENO, "==> ", 4);
           write(STDOUT_FILENO, argv[i], strlen(argv[i]));
-          write(STDOUT_FILENO, "<==\n", 4);
-          int fd = open(argv[i], O_RDONLY);
+          write(STDOUT_FILENO, " <==\n", 5);
           contents = get_file_contents(fd);
           close(fd);
           print_last_n_lines(contents, num_lines);
