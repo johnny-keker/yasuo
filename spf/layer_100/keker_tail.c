@@ -6,6 +6,8 @@
 #include <errno.h>
 #include <stdbool.h>
 
+#define WORD_MODE_FLAG 1
+
 const int BUFSIZE = 4096;
 const char* INVALID_NUM = "Cant parse given number\n";
 
@@ -30,20 +32,27 @@ char* get_file_contents(int fd) {
   return contents;
 }
 
-void print_last_n_lines(char* contents, int n) {
+void print_last_n_lines(char* contents, int n, int flags) {
   char* end = contents + strlen(contents);
   char* curr_char;
   int curr_n = 0;
   if (*(end - 1) == '\n')
     curr_n--;
+  
+  if ((flags & WORD_MODE_FLAG) != 0)
+    for (curr_char = end - 2; *curr_char == '\n'; --curr_char)
+      curr_n--;
+
   for (curr_char = end; curr_char != contents; --curr_char) {
-    if (*curr_char == '\n') {
+    if (*curr_char == '\n' || ((flags & WORD_MODE_FLAG) != 0 
+          && (*curr_char == ' ' 
+          && *(curr_char + 1) != '\n' 
+          && *(curr_char - 1) != '\n'))) 
       curr_n++;
-      if (curr_n == n)
-        break;
-    }
+    if (curr_n == n)
+      break;
   }
-  if (*(curr_char) == '\n')
+  if (*curr_char == '\n' || (((flags & WORD_MODE_FLAG) != 0) && *curr_char == ' '))
     curr_char++;
   write(STDOUT_FILENO, curr_char, end - curr_char);
 }
@@ -51,14 +60,18 @@ void print_last_n_lines(char* contents, int n) {
 int main(int argc, char *argv[]) {
   int opt = 0;
   long num_lines = 10;
+  int flags = 0;
 
-  while ((opt = getopt(argc, argv, "n:")) != -1) {
+  while ((opt = getopt(argc, argv, "n:w")) != -1) {
     switch (opt) {
       case 'n':
         if (!parse_int(optarg, &num_lines)) {
           write(STDERR_FILENO, INVALID_NUM, strlen(INVALID_NUM));
           return 1;
         }
+        break;
+      case 'w':
+        flags |= WORD_MODE_FLAG;
         break;
     }
   }
@@ -75,14 +88,14 @@ int main(int argc, char *argv[]) {
       }
       contents = get_file_contents(fd);
       close(fd);
-      print_last_n_lines(contents, num_lines);
+      print_last_n_lines(contents, num_lines, flags);
     }
     else {
       for (int i = optind; i < argc; ++i) {
         if (*argv[i] == '-') {
           write(STDOUT_FILENO, "==> standard input <==\n", 23);
           contents = get_file_contents(STDIN_FILENO);
-          print_last_n_lines(contents, num_lines);
+          print_last_n_lines(contents, num_lines, flags);
           write(STDOUT_FILENO, "\n", 1);
         }
         else {
@@ -98,7 +111,7 @@ int main(int argc, char *argv[]) {
           write(STDOUT_FILENO, " <==\n", 5);
           contents = get_file_contents(fd);
           close(fd);
-          print_last_n_lines(contents, num_lines);
+          print_last_n_lines(contents, num_lines, flags);
           write(STDOUT_FILENO, "\n", 1);
         }
       }
@@ -106,6 +119,6 @@ int main(int argc, char *argv[]) {
   }
   else {
     contents = get_file_contents(STDIN_FILENO);
-    print_last_n_lines(contents, num_lines);
+    print_last_n_lines(contents, num_lines, flags);
   }
 }
