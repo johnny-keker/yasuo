@@ -74,6 +74,8 @@ int main(int argc, char *argv[]) {
       case 'w':
         flags |= WORD_MODE_FLAG;
         break;
+      default:
+        return 1;
     }
   }
   char* contents;
