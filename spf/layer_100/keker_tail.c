@@ -47,7 +47,8 @@ void print_last_n_lines(char* contents, int n, int flags) {
     if (*curr_char == '\n' || ((flags & WORD_MODE_FLAG) != 0 
           && (*curr_char == ' ' 
           && *(curr_char + 1) != '\n' 
-          && *(curr_char - 1) != '\n'))) 
+          && *(curr_char - 1) != '\n'
+          && *(curr_char + 1) != ' '))) 
       curr_n++;
     if (curr_n == n)
       break;
