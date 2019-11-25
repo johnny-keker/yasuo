@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   printf("    <...pid=%u...>\n", pid);
   printf("    <...uid=%u...>\n", uid);
   printf("    <...gid=%u...>\n", gid);
-  printf("<...start-parameters...>\n");
+  printf("<...start-parameters...>\n\n");
   // logging
 
   // server setup from args
@@ -39,8 +39,16 @@ int main(int argc, char *argv[]) {
   while ((opt = getopt(argc, argv, "v")) != -1) {
     switch (opt) {
       case 'v':
+        // setting run flag
         run_mode = SYSVMODE;
+        // initialize system v memory segment
         sysVMemID = shmget(pid, BUFSIZE, IPC_CREAT | IPC_EXCL);
+        // logging
+        printf("<...running-system-v-mode...>\n");
+        printf("<...created-system-v-memory-segment...>\n");
+        printf("    <...id=%u...>\n", pid);
+        printf("    <...size=%u-bytes...>\n", BUFSIZE);
+        // logging
         break;
       default:
         fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
