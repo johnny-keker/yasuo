@@ -9,21 +9,31 @@
 #define BUFSIZE 4096
 #define SYSVMODE 1
 
-int main(int argc, char *argv[]) {
+// structure that contain
+// required info
+struct system_info {
+  pid_t pid;
+  uid_t uid;
+  gid_t gid;
+  time_t startup_time;
+  double sys_loads[3];
+};
+
+int main(int argc, char* argv[]) {
+  // initialize system info struct
+  struct system_info* sys_info_ptr;
   // storing pid, uid, gid
   pid_t pid = getpid();
   uid_t uid = getuid();
   gid_t gid = getgid();
-  // storing server start time
+  // initialize start time
   time_t start_time = time(NULL);
-  // time since start time
-  time_t current_time = 0;
-  // array for getting average system load
-  double loads[3];
 
   // MODE SPECIFIC
   int sysVMemID; // system V memory segment id
   // MODE SPECIFIC
+  
+  
   
   // logging
   printf("<...initializing-server...>\n\n");
@@ -41,13 +51,16 @@ int main(int argc, char *argv[]) {
       case 'v':
         // setting run flag
         run_mode = SYSVMODE;
-        // initialize system v memory segment
-        sysVMemID = shmget(pid, BUFSIZE, IPC_CREAT | IPC_EXCL);
+        // initialize system v memory segment and set system info pointer to
+        // system v pointer
+        sysVMemID = shmget(IPC_PRIVATE, sizeof(struct system_info), IPC_CREAT | 0644);
+        void* sysVMemPointer = shmat(sysVMemID, NULL, 0);
+        sys_info_ptr = (struct system_info*)sysVMemPointer;
         // logging
         printf("<...running-system-v-mode...>\n");
         printf("<...created-system-v-memory-segment...>\n");
-        printf("    <...id=%u...>\n", pid);
-        printf("    <...size=%u-bytes...>\n", BUFSIZE);
+        printf("    <...id=%u...>\n", sysVMemID);
+        printf("    <...size=%u-bytes...>\n\n", sizeof(struct system_info));
         // logging
         break;
       default:
@@ -55,15 +68,26 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
   }
+  
+  // initialize sys_info struct
+  (*sys_info_ptr).pid = pid;
+  (*sys_info_ptr).uid = uid;
+  (*sys_info_ptr).gid = gid;
+  (*sys_info_ptr).startup_time = time(NULL) - start_time;
+  getloadavg((*sys_info_ptr).sys_loads, 3);
+
+  // logging
+  printf("<...server-is-running...>\n");
+  // logging
 
   // server mainloop
   for (;;) {
     // sleeping for 1 second
     sleep(1);
     // updating current time
-    current_time = time(NULL) - start_time;
+    (*sys_info_ptr).startup_time = time(NULL) - start_time;
     // updating average system load
-    getloadavg(loads, 3);
+    getloadavg((*sys_info_ptr).sys_loads, 3);
   }
 
   return 0;
