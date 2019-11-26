@@ -5,19 +5,10 @@
 #include <time.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include "system_info.h"
 
 #define BUFSIZE 4096
 #define SYSVMODE 1
-
-// structure that contain
-// required info
-struct system_info {
-  pid_t pid;
-  uid_t uid;
-  gid_t gid;
-  time_t startup_time;
-  double sys_loads[3];
-};
 
 int main(int argc, char* argv[]) {
   // initialize system info struct
