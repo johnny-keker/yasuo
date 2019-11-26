@@ -23,9 +23,7 @@ int main(int argc, char* argv[]) {
   // MODE SPECIFIC
   int sysVMemID; // system V memory segment id
   // MODE SPECIFIC
-  
-  
-  
+
   // logging
   printf("<...initializing-server...>\n\n");
   printf("<...start-parameters...>\n");

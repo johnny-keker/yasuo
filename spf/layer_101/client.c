@@ -28,11 +28,13 @@ int main(int argc, char* argv[]) {
         // logging
         printf("<...running-system-v-mode...>\n");
         // logging
+
         // getting system_info structure from system V memory segment
         int sysVMemID;
         parse_int(optarg, &sysVMemID);
         printf("    <...id=%u...>\n\n", sysVMemID);
         struct system_info* sys_info = (struct system_info*)shmat(sysVMemID, NULL, 0);
+        
         // logging
         printf("<...received-data...>\n");
         printf("    <...time=%u...>\n", (*sys_info).startup_time);
@@ -45,6 +47,7 @@ int main(int argc, char* argv[]) {
         printf("<...received-data...>\n\n");
         printf("<...terminating-client...>\n");
         // logging
+        
         break;
       default:
         fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
