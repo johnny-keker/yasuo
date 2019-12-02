@@ -2,9 +2,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/msg.h>
 #include <stdbool.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -26,13 +28,12 @@ int main(int argc, char* argv[]) {
   
   // setup client from args
   int opt = 0;
-  while ((opt = getopt(argc, argv, "v:m:")) != -1) {
+  while ((opt = getopt(argc, argv, "v:m:q:")) != -1) {
     switch (opt) {
       case 'v':
         // logging
         printf("<...running-system-v-mode...>\n");
         // logging
-
         // getting system_info structure from system V memory segment
         int sysVMemID;
         parse_int(optarg, &sysVMemID);
@@ -41,16 +42,33 @@ int main(int argc, char* argv[]) {
         break;
       case 'm':
         // logging
-        printf("<...running-mmap-mode...>");
+        printf("<...running-mmap-mode...>\n");
+        printf("    <...name=%s...>\n\n", optarg);
         //logging
-
         // opening file and getting system_info structure from it
 				int mmapFD = open(optarg, O_RDWR, 0644);  // open file
         sys_info = (struct system_info*)mmap(NULL, sizeof(struct system_info),
             PROT_READ, MAP_SHARED, mmapFD, 0); // map file to memory
         break;
+      case 'q':
+        // logging
+        printf("<...running-message-queue-mode...>\n");
+        // logging
+        // initialize message queue
+        int msgQID;
+        parse_int(optarg, &msgQID);
+        printf("    <...id=%u...>\n\n", msgQID);
+        // send message
+        msgbuf_t msg;
+        msg.mtype = MSGTYPE_QUERY;
+        msgsnd(msgQID, &msg, 0, 0);
+        // receive message
+        msgrcv(msgQID, &msg, sizeof(struct system_info), MSGTYPE_REPLY, 0);
+        sys_info = (struct system_info*)malloc(sizeof(struct system_info));
+        memcpy(sys_info, msg.mtext, sizeof(struct system_info));
+        break;
       default:
-        fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-v] [-m] [-q]\n", argv[0]);
         exit(EXIT_FAILURE);
     }
   }
