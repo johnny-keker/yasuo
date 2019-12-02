@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
 #include <time.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -14,6 +16,7 @@
 #define UNDEFMODE 0
 #define SYSVMODE 1
 #define MMAPMODE 2
+#define MSGQMODE 3
 
 int main(int argc, char* argv[]) {
   // initialize system info struct
@@ -29,11 +32,13 @@ int main(int argc, char* argv[]) {
   int sysVMemID; // system V memory segment id
 	int mmapFD;		 // mmap file descriptor
 	char filename[12];	// all numbers are representable by str[12]
+  int msgQID; // message queue id
+  msgbuf_t msg; // message
   // MODE SPECIFIC
 
   // server setup from args
   int opt = 0, run_mode = UNDEFMODE;
-  while ((opt = getopt(argc, argv, "vm")) != -1) {
+  while ((opt = getopt(argc, argv, "vmq")) != -1) {
     switch (opt) {
       case 'v':
         // setting run flag
@@ -54,6 +59,14 @@ int main(int argc, char* argv[]) {
         sys_info_ptr = (struct system_info*)mmap(NULL, sizeof(struct system_info),
             PROT_WRITE | PROT_READ, MAP_SHARED, mmapFD, 0); // map file to memory
 				break;
+      case 'q':
+        // setting run flag
+        run_mode = MSGQMODE;
+        // initialize system_info structure
+        sys_info_ptr = (struct system_info*)malloc(sizeof(struct system_info));
+        // initialize message queue
+        msgQID = msgget(IPC_PRIVATE, IPC_CREAT | 0644);
+        break;
       default:
         fprintf(stderr, "Usage: %s [-v] [-m] [-q]\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -86,6 +99,11 @@ int main(int argc, char* argv[]) {
       printf("    <...name=%s...>\n", filename);
       printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
       break;
+    case MSGQMODE:
+      printf("<...running-message-queue-mode...>\n");
+      printf("<...created-new-queue...>\n");
+      printf("    <...id=%u...>\n", msgQID);
+      break;
     default:
       fprintf(stderr, "Usage: %s [-v] [-m] [-q]\n", argv[0]);
       exit(EXIT_FAILURE);
@@ -105,12 +123,26 @@ int main(int argc, char* argv[]) {
 
   // server mainloop
   for (;;) {
-    // sleeping for 1 second
-    sleep(1);
-    // updating current time
-    (*sys_info_ptr).startup_time = time(NULL) - start_time;
-    // updating average system load
-    getloadavg((*sys_info_ptr).sys_loads, 3);
+    if (run_mode == MSGQMODE) {
+      // receive message
+      msgrcv(msgQID, &msg, 0, MSGTYPE_QUERY, 0);
+      // updating current time
+      (*sys_info_ptr).startup_time = time(NULL) - start_time;
+      // updating average system load
+      getloadavg((*sys_info_ptr).sys_loads, 3);
+      // send reply
+      msg.mtype = MSGTYPE_REPLY;
+      memcpy(msg.mtext, sys_info_ptr, sizeof(struct system_info));
+      msgsnd(msgQID, &msg, sizeof(struct system_info), 0);
+    }
+    else {
+      // sleeping for 1 second
+      sleep(1);
+      // updating current time
+      (*sys_info_ptr).startup_time = time(NULL) - start_time;
+      // updating average system load
+      getloadavg((*sys_info_ptr).sys_loads, 3);
+    }
   }
 
   return 0;
