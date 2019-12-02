@@ -5,10 +5,13 @@
 #include <time.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/mman.h>
+#include <fcntl.h>
 #include "system_info.h"
 
 #define BUFSIZE 4096
 #define SYSVMODE 1
+#define MMAPMODE 2
 
 int main(int argc, char* argv[]) {
   // initialize system info struct
@@ -22,6 +25,8 @@ int main(int argc, char* argv[]) {
 
   // MODE SPECIFIC
   int sysVMemID; // system V memory segment id
+	int mmapFD;		 // mmap file descriptor
+	char filename[12];	// all numbers are representable by str[12]
   // MODE SPECIFIC
 
   // logging
@@ -34,8 +39,9 @@ int main(int argc, char* argv[]) {
   // logging
 
   // server setup from args
+	// int run_mode = -1;
   int opt = 0;
-  while ((opt = getopt(argc, argv, "v")) != -1) {
+  while ((opt = getopt(argc, argv, "vm")) != -1) {
     switch (opt) {
       case 'v':
         // setting run flag
@@ -52,6 +58,22 @@ int main(int argc, char* argv[]) {
         printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
         // logging
         break;
+			case 'm':
+				// setting run flag
+				//run_mode = MMAPMODE;
+				// create file and map it to memory
+				sprintf(filename, "%d", pid);
+				mmapFD = open(filename, O_RDWR | O_CREAT, 0644);  // create file
+        ftruncate(mmapFD, sizeof(struct system_info));    // set file length
+        sys_info_ptr = (struct system_info*)mmap(NULL, sizeof(struct system_info),
+            PROT_WRITE | PROT_READ, MAP_SHARED, mmapFD, 0); // map file to memory
+        // logging
+        printf("<...running-mmap-mode...>\n");
+        printf("<...created-new-file...>\n");
+        printf("    <...name=%s...>\n", filename);
+        printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
+        // logging
+				break;
       default:
         fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
         exit(EXIT_FAILURE);
