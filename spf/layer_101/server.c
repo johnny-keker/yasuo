@@ -34,12 +34,12 @@ int main(int argc, char* argv[]) {
   // logging
 
   // server setup from args
-  int run_mode = -1, opt = 0;
+  int opt = 0;
   while ((opt = getopt(argc, argv, "v")) != -1) {
     switch (opt) {
       case 'v':
         // setting run flag
-        run_mode = SYSVMODE;
+        //run_mode = SYSVMODE;
         // initialize system v memory segment and set system info pointer to
         // system v pointer
         sysVMemID = shmget(IPC_PRIVATE, sizeof(struct system_info), IPC_CREAT | 0644);
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
         printf("<...running-system-v-mode...>\n");
         printf("<...created-system-v-memory-segment...>\n");
         printf("    <...id=%u...>\n", sysVMemID);
-        printf("    <...size=%u-bytes...>\n\n", sizeof(struct system_info));
+        printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
         // logging
         break;
       default:

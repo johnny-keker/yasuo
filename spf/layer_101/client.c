@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
         
         // logging
         printf("<...received-data...>\n");
-        printf("    <...time=%u...>\n", (*sys_info).startup_time);
+        printf("    <...time=%lu...>\n", (*sys_info).startup_time);
         printf("    <...pid=%u...>\n", (*sys_info).pid);
         printf("    <...uid=%u...>\n", (*sys_info).uid);
         printf("    <...gid=%u...>\n", (*sys_info).gid);
