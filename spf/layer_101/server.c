@@ -5,11 +5,13 @@
 #include <time.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/msg.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include "system_info.h"
 
 #define BUFSIZE 4096
+#define UNDEFMODE 0
 #define SYSVMODE 1
 #define MMAPMODE 2
 
@@ -29,6 +31,39 @@ int main(int argc, char* argv[]) {
 	char filename[12];	// all numbers are representable by str[12]
   // MODE SPECIFIC
 
+  // server setup from args
+  int opt = 0, run_mode = UNDEFMODE;
+  while ((opt = getopt(argc, argv, "vm")) != -1) {
+    switch (opt) {
+      case 'v':
+        // setting run flag
+        run_mode = SYSVMODE;
+        // initialize system v memory segment and set system info pointer to
+        // system v pointer
+        sysVMemID = shmget(IPC_PRIVATE, sizeof(struct system_info), IPC_CREAT | 0644);
+        void* sysVMemPointer = shmat(sysVMemID, NULL, 0);
+        sys_info_ptr = (struct system_info*)sysVMemPointer;
+        break;
+			case 'm':
+				// setting run flag
+				run_mode = MMAPMODE;
+				// create file and map it to memory
+				sprintf(filename, "%d", pid);
+				mmapFD = open(filename, O_RDWR | O_CREAT, 0644);  // create file
+        ftruncate(mmapFD, sizeof(struct system_info));    // set file length
+        sys_info_ptr = (struct system_info*)mmap(NULL, sizeof(struct system_info),
+            PROT_WRITE | PROT_READ, MAP_SHARED, mmapFD, 0); // map file to memory
+				break;
+      default:
+        fprintf(stderr, "Usage: %s [-v] [-m] [-q]\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+  }
+  if (run_mode == UNDEFMODE) {
+    fprintf(stderr, "Usage: %s [-v] [-m] [-q]\n", argv[0]);
+    exit(EXIT_FAILURE);
+  }
+
   // logging
   printf("<...initializing-server...>\n\n");
   printf("<...start-parameters...>\n");
@@ -38,47 +73,24 @@ int main(int argc, char* argv[]) {
   printf("<...start-parameters...>\n\n");
   // logging
 
-  // server setup from args
-	// int run_mode = -1;
-  int opt = 0;
-  while ((opt = getopt(argc, argv, "vm")) != -1) {
-    switch (opt) {
-      case 'v':
-        // setting run flag
-        //run_mode = SYSVMODE;
-        // initialize system v memory segment and set system info pointer to
-        // system v pointer
-        sysVMemID = shmget(IPC_PRIVATE, sizeof(struct system_info), IPC_CREAT | 0644);
-        void* sysVMemPointer = shmat(sysVMemID, NULL, 0);
-        sys_info_ptr = (struct system_info*)sysVMemPointer;
-        // logging
-        printf("<...running-system-v-mode...>\n");
-        printf("<...created-system-v-memory-segment...>\n");
-        printf("    <...id=%u...>\n", sysVMemID);
-        printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
-        // logging
-        break;
-			case 'm':
-				// setting run flag
-				//run_mode = MMAPMODE;
-				// create file and map it to memory
-				sprintf(filename, "%d", pid);
-				mmapFD = open(filename, O_RDWR | O_CREAT, 0644);  // create file
-        ftruncate(mmapFD, sizeof(struct system_info));    // set file length
-        sys_info_ptr = (struct system_info*)mmap(NULL, sizeof(struct system_info),
-            PROT_WRITE | PROT_READ, MAP_SHARED, mmapFD, 0); // map file to memory
-        // logging
-        printf("<...running-mmap-mode...>\n");
-        printf("<...created-new-file...>\n");
-        printf("    <...name=%s...>\n", filename);
-        printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
-        // logging
-				break;
-      default:
-        fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
+  switch (run_mode) {
+    case SYSVMODE:
+      printf("<...running-system-v-mode...>\n");
+      printf("<...created-system-v-memory-segment...>\n");
+      printf("    <...id=%u...>\n", sysVMemID);
+      printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
+      break;
+    case MMAPMODE:
+      printf("<...running-mmap-mode...>\n");
+      printf("<...created-new-file...>\n");
+      printf("    <...name=%s...>\n", filename);
+      printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
+      break;
+    default:
+      fprintf(stderr, "Usage: %s [-v] [-m] [-q]\n", argv[0]);
+      exit(EXIT_FAILURE);
   }
+
   
   // initialize sys_info struct
   (*sys_info_ptr).pid = pid;
