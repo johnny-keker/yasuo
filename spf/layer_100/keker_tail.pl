@@ -1,7 +1,7 @@
 #!/usr/bin/perl -T
 
 use strict;
-use warnings;
+use warnings qw(FATAL all);
 use Getopt::Long;
 
 my $num_lines = 10;

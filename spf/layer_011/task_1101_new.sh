@@ -48,12 +48,12 @@ do
 
   # Check group
   if [[ `/usr/xpg4/bin/id -G "$USER"` == *"$owner_gid"* ]]; then
-    if [[ ! $g_per =~ *"w"* ]] && [[ $g_per =~ *"p"* ]]; then
+    if [[ ! $g_per =~ "w" ]] && [[ $g_per =~ "p" ]]; then
       good_boys=( "${good_boys[@]}" "${group_members[@]}" )
     fi
   fi
 
-  if [[ ! $o_per =~ *"w"* ]] && [[ $o_per =~ *"p"* ]]; then
+  if [[ ! $o_per =~ "w" ]] && [[ $o_per =~ "p" ]]; then
     good_boys=( "${good_boys[@]}" "${others[@]}" )
   fi
   if [[ "${good_boys[@]}" =~ "$USER" ]]; then
