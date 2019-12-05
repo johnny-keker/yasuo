@@ -14,7 +14,7 @@ pater_server : pater/server.c
 	$(GCC) $(FLAGS) -o pater_server pater/server.c
 
 filius_c : filius/filius.c filius/alphabet.c
-	$(GCC) $(FLAGS) -o filius_run filius/alphabet.c filius/filius.c
+	$(GCC) $(FLAGS) -pthread -o filius_run filius/alphabet.c filius/filius.c
 
 clean :
 	rm pater_client pater_server
