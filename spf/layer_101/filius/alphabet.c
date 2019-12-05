@@ -10,7 +10,7 @@ char alphabet[26] = {
 // function for printing alphabet
 void print_alphabet() {
 	char* alpha = alphabet;
-	while(*alpha) {
+	while (*alpha) {
 		printf("%c ", *alpha);
 		alpha++;
 	}
@@ -22,5 +22,18 @@ void invert_case() {
 		alphabet[i] = (islower(alphabet[i])) 
 			? toupper(alphabet[i])
 			: tolower(alphabet[i]);
+	}
+}
+
+// function for swap the alphabet
+void swap_alphabet() {
+	int i = 0, j = 25;
+	char c;
+	while (i < j) {
+		c = alphabet[i];
+		alphabet[i] = alphabet[j];
+		alphabet[j] = c;
+		i++;
+		j--;
 	}
 }
