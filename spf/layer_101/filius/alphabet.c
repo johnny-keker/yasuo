@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ctype.h>
 
 
 char alphabet[26] = {
@@ -11,5 +12,13 @@ void print_alphabet() {
 	while(*alpha) {
 		printf("%c ", *alpha);
 		alpha++;
+	}
+}
+
+void invert_case() {
+	for (int i = 0; i < 27; ++i) {
+		alphabet[i] = (islower(alphabet[i])) 
+			? toupper(alphabet[i])
+			: tolower(alphabet[i]);
 	}
 }
