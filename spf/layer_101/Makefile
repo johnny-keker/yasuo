@@ -1,13 +1,20 @@
 GCC = gcc
 FLAGS = -Wall -Wextra --std=gnu99 -pedantic -Werror -g
 
-all : client server
+all : pater_client pater_server filius
 
-client : client.c
-	$(GCC) $(FLAGS) -o client client.c
+pater : pater_client pater_server
 
-server : server.c
-	$(GCC) $(FLAGS) -o server server.c
+filius : filius_c
+
+pater_client : pater/client.c
+	$(GCC) $(FLAGS) -o pater_client pater/client.c
+
+pater_server : pater/server.c
+	$(GCC) $(FLAGS) -o pater_server pater/server.c
+
+filius_c : filius/filius.c filius/alphabet.c
+	$(GCC) $(FLAGS) -o filius_run filius/alphabet.c filius/filius.c
 
 clean :
-	rm client server
+	rm pater_client pater_server
