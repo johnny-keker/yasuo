@@ -30,8 +30,8 @@ int main(int argc, char* argv[]) {
 
   // MODE SPECIFIC
   int sysVMemID; // system V memory segment id
-	int mmapFD;		 // mmap file descriptor
-	char filename[12];	// all numbers are representable by str[12]
+  int mmapFD;     // mmap file descriptor
+  char filename[12];  // all numbers are representable by str[12]
   int msgQID; // message queue id
   msgbuf_t msg; // message
   // MODE SPECIFIC
@@ -49,16 +49,16 @@ int main(int argc, char* argv[]) {
         void* sysVMemPointer = shmat(sysVMemID, NULL, 0);
         sys_info_ptr = (struct system_info*)sysVMemPointer;
         break;
-			case 'm':
-				// setting run flag
-				run_mode = MMAPMODE;
-				// create file and map it to memory
-				sprintf(filename, "%d", pid);
-				mmapFD = open(filename, O_RDWR | O_CREAT, 0644);  // create file
+      case 'm':
+        // setting run flag
+        run_mode = MMAPMODE;
+        // create file and map it to memory
+        sprintf(filename, "%d", pid);
+        mmapFD = open(filename, O_RDWR | O_CREAT, 0644);  // create file
         ftruncate(mmapFD, sizeof(struct system_info));    // set file length
         sys_info_ptr = (struct system_info*)mmap(NULL, sizeof(struct system_info),
             PROT_WRITE | PROT_READ, MAP_SHARED, mmapFD, 0); // map file to memory
-				break;
+        break;
       case 'q':
         // setting run flag
         run_mode = MSGQMODE;
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
       exit(EXIT_FAILURE);
   }
 
-  
+
   // initialize sys_info struct
   (*sys_info_ptr).pid = pid;
   (*sys_info_ptr).uid = uid;

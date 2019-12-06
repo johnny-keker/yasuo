@@ -23,9 +23,9 @@ int main(int argc, char* argv[]) {
   // logging
   printf("<...initializing-client...>\n\n");
   // logging
-  
+
   struct system_info* sys_info;
-  
+
   // setup client from args
   int opt = 0;
   while ((opt = getopt(argc, argv, "v:m:q:")) != -1) {
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
         printf("    <...name=%s...>\n\n", optarg);
         //logging
         // opening file and getting system_info structure from it
-				int mmapFD = open(optarg, O_RDWR, 0644);  // open file
+        int mmapFD = open(optarg, O_RDWR, 0644);  // open file
         sys_info = (struct system_info*)mmap(NULL, sizeof(struct system_info),
             PROT_READ, MAP_SHARED, mmapFD, 0); // map file to memory
         break;
