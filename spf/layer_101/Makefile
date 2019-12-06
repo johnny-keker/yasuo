@@ -7,7 +7,7 @@ pater : pater_client pater_server
 
 filius : filius_mut filius_rw filius_sem_pos filius_sem_sysv
 
-spiritus_sanctus : spiritus_sanctus_server
+spiritus_sanctus : spiritus_sanctus_server spiritus_sanctus_client
 
 pater_client : pater/client.c
 	$(GCC) $(FLAGS) -o pater_client pater/client.c
@@ -30,5 +30,8 @@ filius_sem_sysv : filius/filius.c filius/alphabet.c
 spiritus_sanctus_server : spiritus_sanctus/server.c
 	$(GCC) $(FLAGS) -D SEM_SYSV -pthread -o spiritus_sanctus_srv spiritus_sanctus/server.c
 
+spiritus_sanctus_client : spiritus_sanctus/client.c
+	$(GCC) $(FLAGS) -D SEM_SYSV -pthread -o spiritus_sanctus_clt spiritus_sanctus/client.c
+
 clean :
-	rm -f pater_client pater_server filius_mut filius_rw filius_sem_pos filius_sem_sysv
+	rm -f pater_client pater_server filius_mut filius_rw filius_sem_pos filius_sem_sysv spiritus_sanctus_srv spiritus_sanctus_clt

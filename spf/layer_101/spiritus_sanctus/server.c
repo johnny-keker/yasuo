@@ -8,8 +8,8 @@
 #include "system_info.h"
 
 int main(int argc, char* argv[]) {
-  // init socket address variable
-  char* socket_address = "default_socket";
+  // define socket address variable
+  char* socket_address;
 
   // initialize system info struct
   struct system_info* sys_info_ptr = (struct system_info*)malloc(sizeof(struct system_info));
@@ -37,11 +37,11 @@ int main(int argc, char* argv[]) {
 
   // initialize socket address struct
   struct sockaddr_un addr;
-  memset(&addr, 0, sizeof(addr));
   addr.sun_family = AF_UNIX;
   strncpy(addr.sun_path, socket_address, sizeof(addr.sun_path)-1);
-  bind(fd, (struct sockaddr*)&addr, sizeof(addr));
   unsigned int addr_len = sizeof(struct sockaddr_un);
+  bind(fd, (const struct sockaddr*)&addr, addr_len);
+  listen(fd, 0);
 
   // logging
   printf("<...initializing-server...>\n\n");
