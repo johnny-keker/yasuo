@@ -53,6 +53,19 @@ void* swp_f(void* args) {
   }
 }
 
+#ifdef RW
+void* cnt_f(void* args) {
+  int* interval = (int *)args;
+  for (;;) {
+    usleep(*interval);
+    pthread_rwlock_rdlock(&rwlock);
+    int upper = count_uppercase();
+    printf("\n<...uppercase=%d...>\n", upper);
+    pthread_rwlock_unlock(&rwlock);
+  }
+}
+#endif
+
 int main() {
   // thread descriptors init
   pthread_t inv_thread, swp_thread;
@@ -65,11 +78,21 @@ int main() {
   // initialize rwlock
   pthread_rwlock_init(&rwlock, NULL);
 #endif
+
+#ifdef RW
+  // count interval (hardcoded for now)
+  int cnt_interval = 50;
+  pthread_t cnt_thread;
+  pthread_create(&cnt_thread, NULL, cnt_f, (void *)&cnt_interval);
+  pthread_join(cnt_thread, NULL);
+#endif
+
   // THREADS INIT
   pthread_create(&inv_thread, NULL, inv_f, (void *)&inv_interval);
   pthread_create(&swp_thread, NULL, swp_f, (void *)&swp_interval);
   // THREADS START
   pthread_join(inv_thread, NULL);
   pthread_join(swp_thread, NULL);
+
   return 0;
 }

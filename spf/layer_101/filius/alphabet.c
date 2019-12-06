@@ -37,3 +37,13 @@ void swap_alphabet() {
     j--;
   }
 }
+
+// function for counting uppercase letters
+int count_uppercase() {
+	int upper = 0;
+	for (int i = 0; i < 27; ++i) {
+		if (alphabet[i] >= 'A')
+			upper++;
+	}
+	return upper;
+}
