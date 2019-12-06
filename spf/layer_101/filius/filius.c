@@ -3,8 +3,12 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#if defined SEM_POS || defined SEM_SYSV
+#if defined SEM_POS
 #include <semaphore.h>
+#elif defined SEM_SYSV
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
 #endif
 
 
@@ -18,6 +22,9 @@ pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
 #elif defined SEM_POS
 // define posix semaphore
 sem_t sem;
+#else
+// define sysv semaphore
+int sem_id;
 #endif
 
 void lock() {
@@ -25,8 +32,13 @@ void lock() {
     pthread_mutex_lock(&mutex);
 #elif defined RW
     pthread_rwlock_wrlock(&rwlock);
-#else
+#elif defined SEM_POS
     sem_wait(&sem);
+#else
+  struct sembuf operations[2] = {
+    { .sem_op = 0 }, { .sem_op = 1 }
+  };
+  semop(sem_id, operations, 2);
 #endif
 }
 
@@ -35,8 +47,11 @@ void unlock() {
     pthread_mutex_unlock(&mutex);
 #elif defined RW
     pthread_rwlock_unlock(&rwlock);
-#else
+#elif defined SEM_POS
     sem_post(&sem);
+#else
+  struct sembuf operations = { .sem_op = -1 };
+  semop(sem_id, &operations, 1);
 #endif
 }
 
@@ -84,8 +99,13 @@ int main() {
 #elif defined RW
   // initialize rwlock
   pthread_rwlock_init(&rwlock, NULL);
-#else
+#elif defined SEM_POS
+  // initialize posix semaphore
   sem_init(&sem, 0, 1);
+#else
+  // initialize sysv semaphore
+  sem_id = semget(IPC_PRIVATE, 2, 0600 | IPC_CREAT);
+  semctl(sem_id, 0, SETALL, 1);
 #endif
 
 #ifdef RW
