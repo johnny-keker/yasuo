@@ -12,7 +12,6 @@
 #include <fcntl.h>
 #include "system_info.h"
 
-#define BUFSIZE 4096
 #define UNDEFMODE 0
 #define SYSVMODE 1
 #define MMAPMODE 2
