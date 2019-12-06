@@ -1,11 +1,13 @@
 GCC = gcc
 FLAGS = -Wall -Wextra --std=gnu99 -pedantic -Werror -g
 
-all : pater filius
+all : pater filius spiritus_sanctus
 
 pater : pater_client pater_server
 
 filius : filius_mut filius_rw filius_sem_pos filius_sem_sysv
+
+spiritus_sanctus : spiritus_sanctus_server
 
 pater_client : pater/client.c
 	$(GCC) $(FLAGS) -o pater_client pater/client.c
@@ -24,6 +26,9 @@ filius_sem_pos : filius/filius.c filius/alphabet.c
 	
 filius_sem_sysv : filius/filius.c filius/alphabet.c
 	$(GCC) $(FLAGS) -D SEM_SYSV -pthread -o filius_sem_sysv filius/alphabet.c filius/filius.c
+
+spiritus_sanctus_server : spiritus_sanctus/server.c
+	$(GCC) $(FLAGS) -D SEM_SYSV -pthread -o spiritus_sanctus_srv spiritus_sanctus/server.c
 
 clean :
 	rm -f pater_client pater_server filius_mut filius_rw filius_sem_pos filius_sem_sysv
