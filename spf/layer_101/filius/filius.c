@@ -33,9 +33,6 @@ void* inv_f(void* args) {
     usleep(*interval);
     lock();
     invert_case();
-    printf("\n<...inverted-case...>\n");
-    print_alphabet();
-    printf("\n<...inverted-case...>\n");
     unlock();
   }
 }
@@ -46,9 +43,6 @@ void* swp_f(void* args) {
     usleep(*interval);
     lock();
     swap_alphabet();
-    printf("\n<...swap...>\n");
-    print_alphabet();
-    printf("\n<...swap...>\n");
     unlock();
   }
 }
@@ -70,7 +64,7 @@ int main() {
   // thread descriptors init
   pthread_t inv_thread, swp_thread;
   // setting up intervals (hardcoded for now)
-  int inv_interval = 100, swp_interval = 200;
+  int inv_interval = 100, swp_interval = 200, main_interval = 50;
 #ifdef MUTEX
   // initialize mutex
   pthread_mutex_init(&mutex, NULL);
@@ -81,18 +75,23 @@ int main() {
 
 #ifdef RW
   // count interval (hardcoded for now)
-  int cnt_interval = 50;
+  int cnt_interval = 10;
   pthread_t cnt_thread;
   pthread_create(&cnt_thread, NULL, cnt_f, (void *)&cnt_interval);
-  pthread_join(cnt_thread, NULL);
 #endif
 
   // THREADS INIT
   pthread_create(&inv_thread, NULL, inv_f, (void *)&inv_interval);
   pthread_create(&swp_thread, NULL, swp_f, (void *)&swp_interval);
-  // THREADS START
-  pthread_join(inv_thread, NULL);
-  pthread_join(swp_thread, NULL);
+  
+  for (;;) {
+    usleep(main_interval);
+    lock();
+    printf("\n<... ");
+    print_alphabet();
+    printf("...>\n");
+    unlock();
+  }
 
   return 0;
 }

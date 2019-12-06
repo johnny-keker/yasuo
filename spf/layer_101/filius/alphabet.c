@@ -18,7 +18,7 @@ void print_alphabet() {
 
 // function for inerting the case of alphabet
 void invert_case() {
-  for (int i = 0; i < 27; ++i) {
+  for (int i = 0; i < 26; ++i) {
     alphabet[i] = (islower(alphabet[i]))
       ? toupper(alphabet[i])
       : tolower(alphabet[i]);
@@ -40,10 +40,8 @@ void swap_alphabet() {
 
 // function for counting uppercase letters
 int count_uppercase() {
-	int upper = 0;
-	for (int i = 0; i < 27; ++i) {
-		if (alphabet[i] >= 'A')
-			upper++;
-	}
-	return upper;
+  int upper = 0;
+  for (int i = 0; i < 26; ++i)
+    if (alphabet[i] <= 'Z') upper++;
+  return upper;
 }
