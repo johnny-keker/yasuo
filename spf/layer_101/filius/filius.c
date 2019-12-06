@@ -6,7 +6,7 @@
 void* inv_f(void* args) {
 	int* interval = (int *)args;
 	for (;;) {
-		sleep(*interval);
+		usleep(*interval);
 		invert_case();
 		printf("\n<...inverted-case...>\n");
 		print_alphabet();
@@ -14,12 +14,25 @@ void* inv_f(void* args) {
 	}
 }
 
+void* swp_f(void* args) {
+	int* interval = (int *)args;
+	for (;;) {
+		usleep(*interval);
+		swap_alphabet();
+		printf("\n<...swap...>\n");
+		print_alphabet();
+		printf("\n<...swap...>\n");
+	}
+}
+
 int main() {
-	pthread_t inv_thread;
-	int inv_interval = 1;
+	pthread_t inv_thread, swp_thread;
+	int inv_interval = 100, swp_interval = 200;
 	
 	pthread_create(&inv_thread, NULL, inv_f, (void *)&inv_interval);
+	pthread_create(&swp_thread, NULL, swp_f, (void *)&swp_interval);
 	pthread_join(inv_thread, NULL);
+	pthread_join(swp_thread, NULL);
 
 	return 0;
 }
