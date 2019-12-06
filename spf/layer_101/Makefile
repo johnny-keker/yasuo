@@ -5,7 +5,7 @@ all : pater filius
 
 pater : pater_client pater_server
 
-filius : filius_mut filius_rw
+filius : filius_mut filius_rw filius_sem_pos
 
 pater_client : pater/client.c
 	$(GCC) $(FLAGS) -o pater_client pater/client.c
@@ -18,6 +18,9 @@ filius_mut : filius/filius.c filius/alphabet.c
 
 filius_rw : filius/filius.c filius/alphabet.c
 	$(GCC) $(FLAGS) -D RW -pthread -o filius_rw filius/alphabet.c filius/filius.c
+
+filius_sem_pos : filius/filius.c filius/alphabet.c
+	$(GCC) $(FLAGS) -D SEM_POS -pthread -o filius_sem_pos filius/alphabet.c filius/filius.c
 
 clean :
 	rm pater_client pater_server

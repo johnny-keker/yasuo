@@ -1,29 +1,42 @@
 #include "alphabet.h"
 #include <stdio.h>
-#include <pthread.h>
 #include <unistd.h>
+#include <pthread.h>
+
+#if defined SEM_POS || defined SEM_SYSV
+#include <semaphore.h>
+#endif
+
+
 
 #ifdef MUTEX
 // define mutex
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-#else
+#elif defined RW
 // define rwlock
 pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
+#elif defined SEM_POS
+// define posix semaphore
+sem_t sem;
 #endif
 
 void lock() {
 #ifdef MUTEX
     pthread_mutex_lock(&mutex);
-#else
+#elif defined RW
     pthread_rwlock_wrlock(&rwlock);
+#else
+    sem_wait(&sem);
 #endif
 }
 
 void unlock() {
 #ifdef MUTEX
     pthread_mutex_unlock(&mutex);
-#else
+#elif defined RW
     pthread_rwlock_unlock(&rwlock);
+#else
+    sem_post(&sem);
 #endif
 }
 
@@ -68,9 +81,11 @@ int main() {
 #ifdef MUTEX
   // initialize mutex
   pthread_mutex_init(&mutex, NULL);
-#else
+#elif defined RW
   // initialize rwlock
   pthread_rwlock_init(&rwlock, NULL);
+#else
+  sem_init(&sem, 0, 1);
 #endif
 
 #ifdef RW
