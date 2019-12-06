@@ -6,6 +6,9 @@
 #ifdef MUTEX
 // define mutex
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+#else
+// define rwlock
+pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
 #endif
 
 void* inv_f(void* args) {
@@ -14,6 +17,8 @@ void* inv_f(void* args) {
 		usleep(*interval);
 #ifdef MUTEX
     pthread_mutex_lock(&mutex);
+#else
+    pthread_rwlock_wrlock(&rwlock);
 #endif
 		invert_case();
 		printf("\n<...inverted-case...>\n");
@@ -21,6 +26,8 @@ void* inv_f(void* args) {
 		printf("\n<...inverted-case...>\n");
 #ifdef MUTEX
     pthread_mutex_unlock(&mutex);
+#else
+    pthread_rwlock_unlock(&rwlock);
 #endif
 	}
 }
@@ -31,6 +38,8 @@ void* swp_f(void* args) {
 		usleep(*interval);
 #ifdef MUTEX
     pthread_mutex_lock(&mutex);
+#else
+    pthread_rwlock_wrlock(&rwlock);
 #endif
 		swap_alphabet();
 		printf("\n<...swap...>\n");
@@ -38,6 +47,8 @@ void* swp_f(void* args) {
 		printf("\n<...swap...>\n");
 #ifdef MUTEX
     pthread_mutex_unlock(&mutex);
+#else
+    pthread_rwlock_unlock(&rwlock);
 #endif
 	}
 }
@@ -50,6 +61,9 @@ int main() {
 #ifdef MUTEX	
   // initialize mutex
   pthread_mutex_init(&mutex, NULL);
+#else
+  // initialize rwlock
+  pthread_rwlock_init(&rwlock, NULL);
 #endif
   // THREADS INIT
 	pthread_create(&inv_thread, NULL, inv_f, (void *)&inv_interval);
