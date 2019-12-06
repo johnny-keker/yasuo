@@ -26,4 +26,4 @@ filius_sem_sysv : filius/filius.c filius/alphabet.c
 	$(GCC) $(FLAGS) -D SEM_SYSV -pthread -o filius_sem_sysv filius/alphabet.c filius/filius.c
 
 clean :
-	rm pater_client pater_server
+	rm -f pater_client pater_server filius_mut filius_rw filius_sem_pos filius_sem_sysv
