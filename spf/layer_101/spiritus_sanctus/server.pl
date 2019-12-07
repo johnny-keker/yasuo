@@ -6,7 +6,7 @@ use warnings qw(FATAL all);
 use IO::Socket::UNIX;
 use English;
 
-$ENV{'PATH'} = '/usr/bin';
+$ENV{PATH} = '/usr/bin';
 $ENV{CDPATH}="";
 $ENV{ENV}="";
 $ENV{BASH_ENV} = '/usr/share/Modules/init/bash';
