@@ -6,13 +6,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <signal.h>
+#include <string.h>
 #include "system_info.h"
 
 // initialize system info struct
 struct system_info* sys_info_ptr;
 
 void handle_signals(int sig) {
-  printf("<...received-%d...>\n", sig);
+  printf("<...received-%s...>\n", strsignal(sig));
   printf("    <...time=%lu...>\n", (*sys_info_ptr).startup_time);
   printf("    <...pid=%u...>\n", (*sys_info_ptr).pid);
   printf("    <...uid=%u...>\n", (*sys_info_ptr).uid);
