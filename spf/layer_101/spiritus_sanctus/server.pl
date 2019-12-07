@@ -1,0 +1,48 @@
+#!/usr/bin/perl -T
+
+
+use strict;
+use warnings qw(FATAL all);
+use IO::Socket::UNIX;
+use English;
+
+$ENV{'PATH'} = '/usr/bin';
+$ENV{CDPATH}="";
+$ENV{ENV}="";
+$ENV{BASH_ENV} = '/usr/share/Modules/init/bash';
+
+use constant SYSTEM_INFO_FMT => 'i<i<i<d<d<d<d<';
+use constant SOCKET_PATH => 'LAB_SOCK';
+
+# get socket name
+my $sockname = shift @ARGV;
+
+unlink SOCKET_PATH;
+
+my $server = IO::Socket::UNIX->new(
+  Type => SOCK_STREAM(), Local => SOCKET_PATH, Listen => 1
+) or die "!<...failed-to-create-a-socket-$!...>!\n";
+
+# logging
+my $gid = (split ' ', $GID)[0];
+print "<...initializing-server...>\n\n";
+print "<...start-parameters...>\n";
+print "    <...pid=$PID...>\n";
+print "    <...uid=$UID...>\n";
+print "    <...gid=$gid...>\n";
+print "<...start-parameters...>\n\n";
+# logging
+
+# init server parameters
+my ($s_time, $r_time) = (time(), time());
+my ($l1, $l5, $l15) = (0, 0, 0);
+
+while (my $clt = $server->accept()) {
+  $r_time = time() - $s_time;
+  my $loads = `uptime | awk '{print \$(NF-2)\$(NF-1)\$NF}'`;
+	$loads =~ /(\d+\.\d+),(\d+\.\d+),(\d+\.\d+)/;
+  my $state = pack SYSTEM_INFO_FMT, $PID, $UID, $gid, $r_time, $1, $2, $3;
+
+  $clt->print($state);
+  $clt->close();
+}
