@@ -7,7 +7,7 @@ pater : pater_client pater_server
 
 filius : filius_mut filius_rw filius_sem_pos filius_sem_sysv
 
-spiritus_sanctus : spiritus_sanctus_server spiritus_sanctus_client
+spiritus_sanctus : spiritus_sanctus_server spiritus_sanctus_client unpipes
 
 pater_client : pater/client.c
 	$(GCC) $(FLAGS) -o pater_client pater/client.c
@@ -33,5 +33,9 @@ spiritus_sanctus_server : spiritus_sanctus/server.c
 spiritus_sanctus_client : spiritus_sanctus/client.c
 	$(GCC) $(FLAGS) -D SEM_SYSV -pthread -o spiritus_sanctus_clt spiritus_sanctus/client.c
 
+unpipes : spiritus_sanctus/unpipes.c
+	$(GCC) $(FLAGS) -o unpipes spiritus_sanctus/unpipes.c
+
+
 clean :
-	rm -f pater_client pater_server filius_mut filius_rw filius_sem_pos filius_sem_sysv spiritus_sanctus_srv spiritus_sanctus_clt
+	rm -f pater_client pater_server filius_mut filius_rw filius_sem_pos filius_sem_sysv spiritus_sanctus_srv spiritus_sanctus_clt unpipes
