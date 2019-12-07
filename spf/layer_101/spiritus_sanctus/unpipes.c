@@ -11,11 +11,11 @@ void process_file(int fd, int pipefd) {
 
   int bytes_read;
   while ((bytes_read = read(fd, inbuf, BUFSIZE)) > 0) {
-		int j = 0;
-		for (int i = 0; i < BUFSIZE; i += 2) {
-			pipebuf[j] = inbuf[i];
-			j++;
-		}
+    int j = 0;
+    for (int i = 0; i < BUFSIZE; i += 2) {
+      pipebuf[j] = inbuf[i];
+      j++;
+    }
     write(pipefd, pipebuf, bytes_read / 2);
   }
   close(pipefd);
@@ -45,5 +45,5 @@ int main(int argc, char** argv) {
     close(pipefd_rd);
     process_file(fd, pipefd_wr);
   }
-	return 0;
+  return 0;
 }
