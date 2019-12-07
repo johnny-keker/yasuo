@@ -100,7 +100,7 @@ bool parse_int(const char* str, int* var) {
 int main(int argc, char* argv[]) {
   // thread descriptors init
   pthread_t inv_thread, swp_thread;
-  // setting up intervals (hardcoded for now)
+  // setting up intervals
   int inv_interval = 100, swp_interval = 200, main_interval = 1000, cnt_interval = 10;
   int opt = 0;
   while ((opt = getopt(argc, argv, "i:s:m:c:")) != -1) {
@@ -150,7 +150,6 @@ int main(int argc, char* argv[]) {
 #endif
 
 #ifdef RW
-  // count interval (hardcoded for now)
   pthread_t cnt_thread;
   pthread_create(&cnt_thread, NULL, cnt_f, (void *)&cnt_interval);
 #endif
