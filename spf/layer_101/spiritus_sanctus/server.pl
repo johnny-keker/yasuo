@@ -13,6 +13,7 @@ $ENV{BASH_ENV} = '/usr/share/Modules/init/bash';
 
 use constant SYSTEM_INFO_FMT => 'i<i<i<d<d<d<d<';
 use constant SOCKET_PATH => 'LAB_SOCK';
+use sigtrap 'handler' => \&signal_handler, qw(HUP INT TERM USR1 USR2);
 
 # get socket name
 my $sockname = shift @ARGV;
@@ -45,4 +46,21 @@ while (my $clt = $server->accept()) {
 
   $clt->print($state);
   $clt->close();
+}
+
+sub signal_handler {
+  $r_time = time() - $s_time;
+  my $loads = `uptime | awk '{print \$(NF-2)\$(NF-1)\$NF}'`;
+	$loads =~ /(\d+\.\d+),(\d+\.\d+),(\d+\.\d+)/;
+
+  print "<...received-$_[0]...>\n";
+  print "    <...time=$r_time...>\n";
+  print "    <...pid=$PID...>\n";
+  print "    <...uid=$UID...>\n";
+  print "    <...gid=$gid...>\n";
+  print "    <...ave-sys-load-1min=$1...>\n";
+  print "    <...ave-sys-load-2min=$2...>\n";
+  print "    <...ave-sys-load-15min=$3...>\n";
+  print "<...terminating-server...>\n\n";
+  exit(0);
 }
