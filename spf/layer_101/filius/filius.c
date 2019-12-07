@@ -1,6 +1,8 @@
 #include "alphabet.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <pthread.h>
 
 #if defined SEM_POS
@@ -88,11 +90,50 @@ void* cnt_f(void* args) {
 }
 #endif
 
-int main() {
+bool parse_int(const char* str, int* var) {
+  char* end;
+  *var = (int)strtol(str, &end, 10);
+  if (end == str) return false;
+  return true;
+}
+
+int main(int argc, char* argv[]) {
   // thread descriptors init
   pthread_t inv_thread, swp_thread;
   // setting up intervals (hardcoded for now)
-  int inv_interval = 100, swp_interval = 200, main_interval = 50;
+  int inv_interval = 100, swp_interval = 200, main_interval = 1000, cnt_interval = 10;
+	int opt = 0;
+	while ((opt = getopt(argc, argv, "i:s:m:c:")) != -1) {
+		switch (opt) {
+			case 'i':
+				if (!parse_int(optarg, &inv_interval)) {
+          printf("-i parameter must be integter!");
+          return 1;
+        }
+				break;
+			case 's':
+				if (!parse_int(optarg, &swp_interval)) {
+          printf("-s parameter must be integter!");
+          return 1;
+        }
+				break;
+			case 'm':
+				if (!parse_int(optarg, &main_interval)) {
+          printf("-m parameter must be integter!");
+          return 1;
+        }
+				break;
+			case 'c':
+				if (!parse_int(optarg, &cnt_interval)) {
+          printf("-c parameter must be integter!");
+          return 1;
+        }
+				break;
+			default:
+				fprintf(stderr, "Usage: %s [-i] [-s] [-m] [-c]\n", argv[0]);
+				exit(EXIT_FAILURE);
+		}
+	}
 #ifdef MUTEX
   // initialize mutex
   pthread_mutex_init(&mutex, NULL);
@@ -110,7 +151,6 @@ int main() {
 
 #ifdef RW
   // count interval (hardcoded for now)
-  int cnt_interval = 10;
   pthread_t cnt_thread;
   pthread_create(&cnt_thread, NULL, cnt_f, (void *)&cnt_interval);
 #endif
