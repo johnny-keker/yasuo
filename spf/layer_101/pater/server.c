@@ -9,6 +9,7 @@
 #include <sys/shm.h>
 #include <sys/msg.h>
 #include <sys/mman.h>
+#include <signal.h>
 #include <fcntl.h>
 #include "system_info.h"
 
@@ -17,18 +18,29 @@
 #define MMAPMODE 2
 #define MSGQMODE 3
 
+
+struct system_info* sys_info_ptr;
+void* sysVMemPointer;
+int sysVMemID; // system V memory segment id
+
+void shutdown_server() {
+  printf("\n<...server-shutdown...>\n");
+  if (sysVMemPointer) {
+    shmdt(sysVMemPointer);
+    printf("<...system-v-pointer-released...>\n");
+  }
+  exit(0);
+}
 int main(int argc, char* argv[]) {
   // initialize system info struct
-  struct system_info* sys_info_ptr;
   // storing pid, uid, gid
   pid_t pid = getpid();
   uid_t uid = getuid();
   gid_t gid = getgid();
   // initialize start time
   time_t start_time = time(NULL);
-
+  signal(SIGINT, shutdown_server);
   // MODE SPECIFIC
-  int sysVMemID; // system V memory segment id
   int mmapFD;     // mmap file descriptor
   char filename[12];  // all numbers are representable by str[12]
   int msgQID; // message queue id
@@ -45,7 +57,8 @@ int main(int argc, char* argv[]) {
         // initialize system v memory segment and set system info pointer to
         // system v pointer
         sysVMemID = shmget(IPC_PRIVATE, sizeof(struct system_info), IPC_CREAT | 0644);
-        void* sysVMemPointer = shmat(sysVMemID, NULL, 0);
+        printf("%u\n", sysVMemID);
+        sysVMemPointer = shmat(sysVMemID, NULL, 0);
         sys_info_ptr = (struct system_info*)sysVMemPointer;
         break;
       case 'm':
@@ -89,7 +102,7 @@ int main(int argc, char* argv[]) {
     case SYSVMODE:
       printf("<...running-system-v-mode...>\n");
       printf("<...created-system-v-memory-segment...>\n");
-      printf("    <...id=%u...>\n", sysVMemID);
+      //printf("    <...id=%u...>\n", sysVMemID);
       printf("    <...size=%lu-bytes...>\n\n", sizeof(struct system_info));
       break;
     case MMAPMODE:
