@@ -53,13 +53,15 @@ void process_request(int client_fd, char* request) {
       sprintf(out_buf, "%s\n", current_entity->d_name);
       send_message(client_fd, out_buf);
     }
-    sprintf(out_buf, "\n\n");
+    sprintf(out_buf, "\n");
     send_message(client_fd, out_buf);
     closedir(current_dir);
     // PROCESS CURRENT DIRECTORY
     request += strlen(request);
     request += 2;                      // skip \0/n
   }
+  send_message(client_fd, "\r\n");
+  close(client_fd);
   separate();
 }
 // REQUEST PROCESSING
@@ -72,16 +74,20 @@ void handle_client(int client_fd) {
   int bytes_read;
   int len = 0;
   while ((bytes_read = read(client_fd, client_buffer, BUFSIZE)) > 0) {
-    if (bytes_read == 2) {                // only /r/n => empty line
-      req[len - 1] = '\0';                // programmaticaly insert \0 to the end of request
-      process_request(client_fd, req);
-      break;
-    }
     req = realloc(req, len + bytes_read);
     for (int i = 0; i < bytes_read; i++) {
       req[len + i] = client_buffer[i];
     }
     len += bytes_read;
+    if (strlen(req) > 4
+          && req[len - 1] == '\n'
+          && req[len - 2] == '\r'
+          && req[len - 3] == '\n'
+          && req[len - 4] == '\r') {                // empty line
+      req[len - 3] = '\0';                // programmaticaly insert \0 to the end of request
+      process_request(client_fd, req);
+      break;
+    }
   }
 }
 // CLIENT HANDLING LOGIC
