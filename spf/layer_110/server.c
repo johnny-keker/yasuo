@@ -23,7 +23,7 @@ void DIE_ON_ERROR(char *last_words) {
 
 // CLIENT HANDLING LOGIC
 void handle_client(int client_fd) {
-  
+  format_string("client-%d-connected", client_fd);
 }
 // CLIENT HANDLING LOGIC
 
@@ -80,8 +80,7 @@ int main(int argc, char *argv[]) {
     DIE_ON_ERROR("<...cant-connect-to-client...>");
     if (!fork()) {
     // HANDLE CLIENT IN CHILD PROCESS
-    
-    
+    handle_client(client);
     // HANDLE CLIENT IN CHILD PROCESS
     }
   }
