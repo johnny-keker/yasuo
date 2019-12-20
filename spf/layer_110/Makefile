@@ -10,5 +10,8 @@ server : server.c
 server_non_pedantic : server.c
 	$(GCC) $(FLAGS_NON_PEDANTIC) -o server server.c
 
+logger : logger.c
+	$(GCC) $(FLAGS) -o logger logger.c
+
 clean :
 	rm -f server

@@ -58,8 +58,16 @@ int main(int argc, char *argv[]) {
   listen(socket_fd, 10);
   DIE_ON_ERROR("<...cant-listen-on-port...>");
   // SETUP SERVER
-  
-  printf("\n<...listening-on-%d...>\n", port);
+
+  // GETTING USERNAME
+  char *username = getlogin();
+  DIE_ON_ERROR("<...cant-get-username...>");
+  // GETTING USERNAME
+
+  // LOGGING
+  printf("<...yasuo-tcp-server...>\n");
+  printf("<...hello-%s...>\n", username);
+  printf("\n@<...listening-on-%d...>@\n", port);
 
   // MAIN LOOP
   for (;;) {
