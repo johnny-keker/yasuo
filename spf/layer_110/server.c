@@ -21,9 +21,33 @@ void DIE_ON_ERROR(char *last_words) {
 }
 // ERROR HANDLING
 
+void process_request(int client_fd, char* request) {
+  for (int i = 0; i < strlen(request); i++) {
+    if (request[i] == '\r') request[i] = '\0';
+  }
+
+}
+
 // CLIENT HANDLING LOGIC
 void handle_client(int client_fd) {
   format_string("client-%d-connected", client_fd);
+  char *client_buffer = (char*)malloc(BUFSIZE);
+  char *req = NULL;
+  int bytes_read;
+  int len = 0;
+  while ((bytes_read = read(client_fd, client_buffer, BUFSIZE)) > 0) {
+    if (bytes_read == 2) {                // only /r/n => empty line
+      req = realloc(req, len + 1);
+      req[len] = '\0';                    // programmaticaly insert \0 to the end of request
+      process_request(client_fd, req);
+      break;
+    }
+    req = realloc(req, len + bytes_read);
+    for (int i = 0; i < bytes_read; i++) {
+      req[len + i] = client_buffer[i];
+    }
+    len += bytes_read;
+  }
 }
 // CLIENT HANDLING LOGIC
 
@@ -57,7 +81,7 @@ int main(int argc, char *argv[]) {
   // SETUP SERVER
   bind(socket_fd, (struct sockaddr *) &addr, sizeof(struct sockaddr_in));
   DIE_ON_ERROR("<...cant-bind-addr-to-socket...>");
-  listen(socket_fd, 10);
+  listen(socket_fd, 0);
   DIE_ON_ERROR("<...cant-listen-on-port...>");
   // SETUP SERVER
 
@@ -79,9 +103,9 @@ int main(int argc, char *argv[]) {
     int client = accept(socket_fd, NULL, NULL);
     DIE_ON_ERROR("<...cant-connect-to-client...>");
     if (!fork()) {
-    // HANDLE CLIENT IN CHILD PROCESS
-    handle_client(client);
-    // HANDLE CLIENT IN CHILD PROCESS
+      // HANDLE CLIENT IN CHILD PROCESS
+      handle_client(client);
+      // HANDLE CLIENT IN CHILD PROCESS
     }
   }
   // MAIN LOOP
