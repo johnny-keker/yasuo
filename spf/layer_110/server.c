@@ -22,6 +22,13 @@ void DIE_ON_ERROR(char *last_words) {
 }
 // ERROR HANDLING
 
+// SENDING MESSAGE
+void send_message(int client_fd, char* message) {
+  write(client_fd, message, strlen(message));
+  errno = 0;
+}
+// SENDING MESSAGE
+
 // REQUEST PROCESSING
 void process_request(int client_fd, char* request) {
   int dir_count = 0;
@@ -34,27 +41,35 @@ void process_request(int client_fd, char* request) {
   }
   for (int i = 0; i < dir_count; i++) {
     format_string("requested-directory");
-    DIE_ON_ERROR("cant-open-dir");
     format_string(request);
     // PROCESS CURRENT DIRECTORY
     DIR *current_dir = opendir(request);
+    char *out_buf = (char*)malloc(BUFSIZE);
+    sprintf(out_buf, "dir-'%s'\n", request);
     if (errno == EACCES) {
-      printf("permission denied unhandled\n");        // TODO: HANDLE
+      sprintf(out_buf, "dir-'%s'\n!permission-denied!\n", request);
+      send_message(client_fd, out_buf);
       continue;
     }
     else if (errno == ENOENT) {
-      printf("directory not exist unhandled\n");      // TODO: HANDLE
+      sprintf(out_buf, "dir-'%s'\n!not-exist!\n", request);
+      send_message(client_fd, out_buf);
       continue;
     }
+    send_message(client_fd, out_buf);
     struct dirent *current_entity;
     while ((current_entity = readdir(current_dir)) != NULL) {
-      format_string("%s", current_entity->d_name);
+      sprintf(out_buf, "%s\n", current_entity->d_name);
+      send_message(client_fd, out_buf);
     }
+    sprintf(out_buf, "\n\n");
+    send_message(client_fd, out_buf);
     closedir(current_dir);
     // PROCESS CURRENT DIRECTORY
     request += strlen(request);
     request += 2;                      // skip \0/n
   }
+  separate();
 }
 // REQUEST PROCESSING
 
