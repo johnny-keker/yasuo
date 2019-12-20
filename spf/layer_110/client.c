@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     write(socket_fd, out_buf, strlen(argv[i]) + 2);
     DIE_ON_ERROR("<...cannot-send-message...>");
   }
-  dprintf(socket_fd, "\r\n");
+  write(socket_fd, "\r\n", 2);
   DIE_ON_ERROR("<...cannot-send-message...>");
   // MAKING REQUEST
 

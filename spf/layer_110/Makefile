@@ -1,4 +1,5 @@
 GCC = gcc
+# add -lsocket on helios
 FLAGS = -Wall -Wextra --std=gnu99 -pedantic -Werror -g
 FLAGS_NON_PEDANTIC = -Wall -Wextra --std=gnu99 -g
 
