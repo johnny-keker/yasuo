@@ -8,19 +8,10 @@
 #include <dirent.h>
 
 #include "logger.h"
+#include "error.h"
 
 #define USAGE "Usage: ./server port\n"
 #define BUFSIZE 4096
-
-// ERROR HANDLING
-void DIE_ON_ERROR(char *last_words) {
-  if (errno) {
-    fprintf(stderr, "!<...error...>!\n  %s\n  %s\n!<...error...>!\n",
-        last_words, strerror(errno));
-    exit(1);
-  }
-}
-// ERROR HANDLING
 
 // SENDING MESSAGE
 void send_message(int client_fd, char* message) {
