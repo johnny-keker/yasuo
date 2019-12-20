@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "logger.h"
+
 #define USAGE "Usage: ./server port\n"
 #define BUFSIZE 4096
 
@@ -65,10 +67,13 @@ int main(int argc, char *argv[]) {
   // GETTING USERNAME
 
   // LOGGING
-  printf("<...yasuo-tcp-server...>\n");
-  printf("<...hello-%s...>\n", username);
-  printf("\n@<...listening-on-%d...>@\n", port);
-
+  separate();
+  format_string("yasuo-tcp-server");
+  format_string("hello-%s", username);
+  format_string("@listening-on-%d@", port);
+  separate();
+  // LOGGING
+  
   // MAIN LOOP
   for (;;) {
     int client = accept(socket_fd, NULL, NULL);
