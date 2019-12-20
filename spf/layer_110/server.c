@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <dirent.h>
 
 #include "logger.h"
 
@@ -32,7 +33,25 @@ void process_request(int client_fd, char* request) {
     }
   }
   for (int i = 0; i < dir_count; i++) {
+    format_string("requested-directory");
+    DIE_ON_ERROR("cant-open-dir");
     format_string(request);
+    // PROCESS CURRENT DIRECTORY
+    DIR *current_dir = opendir(request);
+    if (errno == EACCES) {
+      printf("permission denied unhandled\n");        // TODO: HANDLE
+      continue;
+    }
+    else if (errno == ENOENT) {
+      printf("directory not exist unhandled\n");      // TODO: HANDLE
+      continue;
+    }
+    struct dirent *current_entity;
+    while ((current_entity = readdir(current_dir)) != NULL) {
+      format_string("%s", current_entity->d_name);
+    }
+    closedir(current_dir);
+    // PROCESS CURRENT DIRECTORY
     request += strlen(request);
     request += 2;                      // skip \0/n
   }
@@ -48,7 +67,7 @@ void handle_client(int client_fd) {
   int len = 0;
   while ((bytes_read = read(client_fd, client_buffer, BUFSIZE)) > 0) {
     if (bytes_read == 2) {                // only /r/n => empty line
-      req[len - 1] = '\0';                    // programmaticaly insert \0 to the end of request
+      req[len - 1] = '\0';                // programmaticaly insert \0 to the end of request
       process_request(client_fd, req);
       break;
     }
