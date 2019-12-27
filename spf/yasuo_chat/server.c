@@ -85,6 +85,7 @@ void* handle_client(void* client_fd_void) {
 }
 
 int setup_socket(char* p_str) {
+  // PORT PARSING
   char *port_str;
   unsigned int port = (int)strtol(p_str, &port_str, 10);
   if (port >= 65536 || *port_str != '\0' || errno != 0) {
@@ -147,19 +148,17 @@ int main(int argc, char *argv[]) {
     sprintf(message, "%d: %s\n%c", chatrooms[1].id, chatrooms[1].name, '\0');
     write(client, message, strlen(message));
 
-    int bytes_read;
     char *client_buffer = (char*)malloc(2);
-    while ((bytes_read = read(client, client_buffer, 2)) > 0) {
-      if (client_buffer[0] == '0') {
-        chatrooms[0].clients[chatrooms[0].connected] = client;
-        chatrooms[0].connected++;
-        format_string("client-added-to-chat-0");
-      }
-      else {
-        chatrooms[1].clients[chatrooms[1].connected] = client;
-        chatrooms[1].connected++;
-        format_string("client-added-to-chat-1");
-      }
+    read(client, client_buffer, 2);
+    if (client_buffer[0] == '0') {
+      chatrooms[0].clients[chatrooms[0].connected] = client;
+      chatrooms[0].connected++;
+      format_string("client-added-to-chat-0");
+    }
+    else {
+      chatrooms[1].clients[chatrooms[1].connected] = client;
+      chatrooms[1].connected++;
+      format_string("client-added-to-chat-1");
     }
 
     pthread_t client_thrd;

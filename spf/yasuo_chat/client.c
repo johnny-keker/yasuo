@@ -13,30 +13,14 @@
 #define USAGE "./client host port\n"
 #define BUFSIZE 4096
 
-int main(int argc, char *argv[]) {
-  // CHECK ARGC
-  if (argc != 3) {
-    fprintf(stderr, "%s", USAGE);
-    exit(1);
-  }
-  // CHECK ARGC
-
-  // PORT PARSING
-  char *port_str;
-  unsigned int port = (int)strtol(argv[2], &port_str, 10);
-  if (port >= 65536 || *port_str != '\0' || errno != 0) {
-    fprintf(stderr, "!<...error...>!\n  <...wrong-port-num...>\n!<...error...>!\n");
-    exit(1);
-  }
-  // PORT PARSING
-
+int get_socket(char *host, char* p_str) {
   // SETUP SOCKET
   struct addrinfo hints = {
     .ai_family = AF_INET, .ai_socktype = SOCK_STREAM, .ai_protocol = IPPROTO_TCP
   };
   struct addrinfo *addr;
   int errcode;
-  if ((errcode = getaddrinfo(argv[1], argv[2], &hints, &addr)) != 0) {
+  if ((errcode = getaddrinfo(host, p_str, &hints, &addr)) != 0) {
     fprintf(stderr, "!<...error...>!\n  %s\n!<...error...>!\n", gai_strerror(errcode));
     return 1;
   }
@@ -50,29 +34,61 @@ int main(int argc, char *argv[]) {
     socket_fd = close(socket_fd);
   }
   if (socket_fd <= 0) {
-    fprintf(stderr, "!<...error...>!\n  <...'%s:%s'-unreachable...>\n!<...error...>!\n", argv[1], argv[2]);
+    fprintf(stderr, "!<...error...>!\n  <...'%s:%s'-unreachable...>\n!<...error...>!\n", host, p_str);
     return 1;
   }
   freeaddrinfo(addr);
   // FINDING CORRECT ADDRESS FROM getaddinfo OUTPUT
+  return socket_fd;
+}
+
+unsigned int try_get_port(char *p_str) {
+  // PORT PARSING
+  char *port_str;
+  unsigned int port = (int)strtol(p_str, &port_str, 10);
+  if (port >= 65536 || *port_str != '\0' || errno != 0) {
+    fprintf(stderr, "!<...error...>!\n  <...wrong-port-num...>\n!<...error...>!\n");
+    exit(1);
+  }
+  // PORT PARSING
+  return port;
+}
+
+int main(int argc, char *argv[]) {
+  // CHECK ARGC
+  if (argc != 3) {
+    fprintf(stderr, "%s", USAGE);
+    exit(1);
+  }
+  // CHECK ARGC
+
+  //unsigned int port = try_get_port(argv[2]);
+  int socket_fd = get_socket(argv[1], argv[2]);
 
   char* nickname = (char*)malloc(BUFSIZE);
   printf("Enter nickname:\n");
   scanf("%s", nickname);
 
-  // RECEIVING RESULT
+  // CHAT SELECTION
   char *buf = (char*)malloc(BUFSIZE);
   int bytes_read;
   while ((bytes_read = read(socket_fd, buf, BUFSIZE)) > 0) {
     write(STDOUT_FILENO, buf, bytes_read);
     if (buf[bytes_read] == '\0') break;
   }
-  // RECEIVING RESULT
+  // CHAT SELECTION
 
-  // SENDING REQUEST
-  char* char_id = (char*)malloc(1);
-  scanf("%s", char_id);
-  write(socket_fd, char_id, 2);
-  DIE_ON_ERROR("h");
-  // SENDING REQUEST
+  // SENDING CHAT ID
+  char* chat_id = (char*)malloc(1);
+  scanf("%s", chat_id);
+  write(socket_fd, chat_id, 2);
+  DIE_ON_ERROR("<cant-send-message>");
+  // SENDING CHAT ID
+
+  // GETTING CHAT PORT
+  while ((bytes_read = read(socket_fd, buf, BUFSIZE)) > 0) {
+    write(STDOUT_FILENO, buf, bytes_read);
+    if (buf[bytes_read] == '\0') break;
+  }
+  // GETTING CHAT PORT
 }
