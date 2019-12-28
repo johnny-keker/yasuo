@@ -58,9 +58,12 @@ unsigned int try_get_port(char *p_str) {
 void *listener(void *socket_fd_ptr) {
   int socket_fd = *(int*)socket_fd_ptr;
   char *buf = (char*)malloc(BUFSIZE);
+  int bytes_read;
   for (;;) {
-  int bytes_read = read(socket_fd, buf, BUFSIZE);
-    write(STDOUT_FILENO, buf, bytes_read);
+    while ((bytes_read = read(socket_fd, buf, BUFSIZE)) > 0) {
+      buf[bytes_read] = '\0';
+      write(STDOUT_FILENO, buf, bytes_read);
+    }
   }
 }
 
@@ -96,13 +99,18 @@ int main(int argc, char *argv[]) {
   // SENDING CHAT ID
   
   char *message = (char*) malloc(BUFSIZE);
-  sprintf(message, "%s has joined the chat!%c", nickname, '\0');
+  sprintf(message, "%s has joined the chat!\n%c", nickname, '\0');
   write(socket_fd, message, strlen(message));
 
   pthread_t listen_thrd;
   pthread_create(&listen_thrd, NULL, listener, &socket_fd);
+  buf[0] = '\0';
   for (;;) {
-    scanf("%s", buf);
+    char* message = (char*)malloc(BUFSIZE);
+    size_t bufsize = BUFSIZE;
+    getline(&message, &bufsize, stdin);
+    if (message[0] == '\n') continue;
+    sprintf(buf, "%s: %s", nickname, message);
     write(socket_fd, buf, strlen(buf));
   }
 }

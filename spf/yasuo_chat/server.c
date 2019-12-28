@@ -24,7 +24,7 @@ typedef struct {
 
 typedef struct {
   int fd;
-  chatroom chat_info;
+  chatroom *chat_info;
 } client_info;
 // DEFINE STRUCTS
 
@@ -88,10 +88,10 @@ void *client_thread(void *client_info_ptr) {
   int bytes_read;
   for (;;) {
     while ((bytes_read = read(client->fd, client_buffer, BUFSIZE)) > 0) {
-      for (int i = 0; i < client->chat_info.connected; i++) {
-        if (client->chat_info.clients[i] == client->fd) continue;          // do not send message to user itself
-        client_buffer[bytes_read] = '\0';
-        send_message(client->chat_info.clients[i], client_buffer);
+      client_buffer[bytes_read] = '\0';
+      for (int i = 0; i < client->chat_info->connected; i++) {
+        if (client->chat_info->clients[i] == client->fd) continue;          // do not send message to user itself
+        send_message(client->chat_info->clients[i], client_buffer);
       }
     }
   }
@@ -129,26 +129,25 @@ int main(int argc, char *argv[]) {
     sprintf(message, "%d: %s\n%c", chatrooms[1].id, chatrooms[1].name, '\0');
     write(client_fd, message, strlen(message));
 
-    client_info client = {
-      .fd = client_fd
-    };
+    client_info *client = (client_info*)malloc(sizeof(client_info));
+    client->fd = client_fd;
 
     char *client_buffer = (char*)malloc(2);
     read(client_fd, client_buffer, 2);
     if (client_buffer[0] == '0') {
       chatrooms[0].clients[chatrooms[0].connected] = client_fd;
       chatrooms[0].connected++;
-      client.chat_info = chatrooms[0];
+      client->chat_info = &chatrooms[0];
       format_string("client-added-to-chat-0");
     }
     else {
       chatrooms[1].clients[chatrooms[1].connected] = client_fd;
       chatrooms[1].connected++;
-      client.chat_info = chatrooms[1];
+      client->chat_info = &chatrooms[1];
       format_string("client-added-to-chat-1");
     }
     pthread_t thrd;
-    pthread_create(&thrd, NULL, client_thread, &client);
+    pthread_create(&thrd, NULL, client_thread, client);
   }
   // SERVER MAIN LOOP
 }
