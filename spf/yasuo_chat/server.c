@@ -16,7 +16,6 @@
 
 // DEFINE STRUCTS
 typedef struct {
-  int id;
   int connected;
   char* name;
   int clients[10];
@@ -29,18 +28,7 @@ typedef struct {
 // DEFINE STRUCTS
 
 // DEFINE CHATROOMS
-chatroom chatrooms[2] = {
-  {
-    .id = 0,
-    .connected = 0,
-    .name = "Room1",
-  },
-  {
-    .id = 1,
-    .connected = 0,
-    .name = "Room2",
-  }
-};
+chatroom chatrooms[10];
 // DEFINE CHATROOMS
 
 // SENDING MESSAGE
@@ -115,18 +103,38 @@ int main(int argc, char *argv[]) {
   separate();
   format_string("yasuo-chatrooms");
   format_string("hello-%s", username);
-  format_string("@listening-on-%s@", argv[1]);
-  separate();
   // LOGGING
   
+  // SETTING UP CHATROOMS
+  int current_room_idx = 0;
+  char* room_buf = (char*)malloc(BUFSIZE);
+  for (;;) {
+    format_string("enter-room-name");
+    scanf("%s", room_buf);
+    if (strlen(room_buf) == 3 && room_buf[0] == 'e' && room_buf[1] == 'n' && room_buf[2] == 'd')
+      break;
+    chatrooms[current_room_idx] = *(chatroom*)malloc(sizeof(chatroom));
+    chatrooms[current_room_idx].name = (char*)malloc(strlen(room_buf));
+    strcpy(chatrooms[current_room_idx].name, room_buf);
+    chatrooms[current_room_idx].connected = 0;
+    current_room_idx++;
+  }
+  format_string("setup-%d-rooms", current_room_idx);
+  // SETTING UP CHATROOMS
+  
+  format_string("@listening-on-%s@", argv[1]);
+  separate();
+
   // SERVER MAIN LOOP
   for (;;) {
     int client_fd = accept(socket_fd, NULL, NULL);
     send_message(client_fd, "Select the chat:\n");
     char* message = (char*)malloc(BUFSIZE);
-    sprintf(message, "%d: %s\n", chatrooms[0].id, chatrooms[0].name);
-    write(client_fd, message, strlen(message));
-    sprintf(message, "%d: %s\n%c", chatrooms[1].id, chatrooms[1].name, '\0');
+    for (int i = 0; i < current_room_idx; ++i) {
+      sprintf(message, "%d: %s\n", i, chatrooms[i].name);
+      write(client_fd, message, strlen(message));
+    }
+    sprintf(message, "%c", '\0');
     write(client_fd, message, strlen(message));
 
     client_info *client = (client_info*)malloc(sizeof(client_info));
@@ -134,18 +142,11 @@ int main(int argc, char *argv[]) {
 
     char *client_buffer = (char*)malloc(2);
     read(client_fd, client_buffer, 2);
-    if (client_buffer[0] == '0') {
-      chatrooms[0].clients[chatrooms[0].connected] = client_fd;
-      chatrooms[0].connected++;
-      client->chat_info = &chatrooms[0];
-      format_string("client-added-to-chat-0");
-    }
-    else {
-      chatrooms[1].clients[chatrooms[1].connected] = client_fd;
-      chatrooms[1].connected++;
-      client->chat_info = &chatrooms[1];
-      format_string("client-added-to-chat-1");
-    }
+    int room_id = atoi(client_buffer);
+    chatrooms[room_id].clients[chatrooms[room_id].connected] = client_fd;
+    chatrooms[room_id].connected++;
+    client->chat_info = &chatrooms[room_id];
+    format_string("client-added-to-chat-'%s'", chatrooms[room_id].name);
     pthread_t thrd;
     pthread_create(&thrd, NULL, client_thread, client);
   }
