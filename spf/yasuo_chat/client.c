@@ -23,7 +23,7 @@ int get_socket(char *host, char* p_str) {
   int errcode;
   if ((errcode = getaddrinfo(host, p_str, &hints, &addr)) != 0) {
     fprintf(stderr, "!<...error...>!\n  %s\n!<...error...>!\n", gai_strerror(errcode));
-    return 1;
+    exit(1);
   }
   // SETUP SOCKET
 
@@ -36,7 +36,7 @@ int get_socket(char *host, char* p_str) {
   }
   if (socket_fd <= 0) {
     fprintf(stderr, "!<...error...>!\n  <...'%s:%s'-unreachable...>\n!<...error...>!\n", host, p_str);
-    return 1;
+    exit(1);
   }
   freeaddrinfo(addr);
   // FINDING CORRECT ADDRESS FROM getaddinfo OUTPUT
