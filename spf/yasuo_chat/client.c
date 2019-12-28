@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <pthread.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -54,6 +55,15 @@ unsigned int try_get_port(char *p_str) {
   return port;
 }
 
+void *listener(void *socket_fd_ptr) {
+  int socket_fd = *(int*)socket_fd_ptr;
+  char *buf = (char*)malloc(BUFSIZE);
+  for (;;) {
+  int bytes_read = read(socket_fd, buf, BUFSIZE);
+    write(STDOUT_FILENO, buf, bytes_read);
+  }
+}
+
 int main(int argc, char *argv[]) {
   // CHECK ARGC
   if (argc != 3) {
@@ -84,11 +94,15 @@ int main(int argc, char *argv[]) {
   write(socket_fd, chat_id, 2);
   DIE_ON_ERROR("<cant-send-message>");
   // SENDING CHAT ID
+  
+  char *message = (char*) malloc(BUFSIZE);
+  sprintf(message, "%s has joined the chat!%c", nickname, '\0');
+  write(socket_fd, message, strlen(message));
 
-  // GETTING CHAT PORT
-  while ((bytes_read = read(socket_fd, buf, BUFSIZE)) > 0) {
-    write(STDOUT_FILENO, buf, bytes_read);
-    if (buf[bytes_read] == '\0') break;
+  pthread_t listen_thrd;
+  pthread_create(&listen_thrd, NULL, listener, &socket_fd);
+  for (;;) {
+    scanf("%s", buf);
+    write(socket_fd, buf, strlen(buf));
   }
-  // GETTING CHAT PORT
 }
